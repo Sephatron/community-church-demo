@@ -3,7 +3,7 @@
 :root {
   --paper: #FAF6EF;
   --ink: #14100E;
-  --clay: #E64A19;
+  --clay: #C43C11;
 }
 
 html {
@@ -144,5 +144,5 @@ body {
 .richtext ul li { position: relative; padding-left: 1.6rem; }
 .richtext ul li::before {
   content: ""; position: absolute; left: 0; top: 0.62em; width: 0.5rem; height: 0.5rem;
-  border-radius: 9999px; background: #E64A19;
+  border-radius: 9999px; background: #C43C11;
 }

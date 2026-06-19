@@ -8,9 +8,9 @@ export default {
         ink: '#14100E',          // warm near-black — dark sections / body text
         paper: '#FAF6EF',        // warm off-white — light background
         clay: {
-          DEFAULT: '#E64A19',    // vivid warm orange-red — primary CTA / accent
-          600: '#C43C11',
-          400: '#F2683B',
+          DEFAULT: '#C43C11',    // warm orange — AA-safe: white text 5.25:1, on paper 4.87:1
+          600: '#A22E0C',        // darker — hover / active states
+          400: '#F2683B',        // lighter — accents on DARK backgrounds only
         },
         teal: {
           DEFAULT: '#0B403B',    // deep teal — secondary dark / duotone
