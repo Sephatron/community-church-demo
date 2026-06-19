@@ -1,0 +1,150 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Button from '../components/Button.astro';
+import { site, link } from '../data/site';
+import heroImg from '../assets/img/church-life.jpg';
+import mapImg from '../assets/img/community-people.jpg';
+
+const mapsUrl = `https://www.google.com/maps/search/${encodeURIComponent(site.mapQuery)}`;
+const mapEmbed = `https://www.google.com/maps?q=${encodeURIComponent(site.mapQuery)}&output=embed`;
+
+const steps = [
+  { time: '10:00am', title: 'Arrive & grab a coffee', body: 'Come early, help yourself to a drink, and our welcome team will look after you and help you find a seat.' },
+  { time: '10:30am', title: 'We begin', body: 'The morning host welcomes everyone and explains how things work — no insider knowledge needed.' },
+  { time: '', title: 'Sung worship', body: 'A live band leads a few songs. Stand, sit, sing along or simply soak it in — whatever you’re comfortable with.' },
+  { time: '~30 mins', title: 'The talk', body: 'One of our team opens up the Bible in a down-to-earth, relevant way you can chew on through the week.' },
+  { time: '', title: 'Kids & youth', body: 'Children head off to their own age-group activities, with childcare on hand for babies and toddlers.' },
+  { time: '~12:00', title: 'Coffee & conversation', body: 'We finish with refreshments and there’s no rush to leave. A great moment to say hello.' },
+];
+
+const faqs = [
+  { q: 'How long do your meetings last?', a: 'Our Sunday meetings usually last around 90 minutes.' },
+  { q: 'What time should I turn up?', a: 'You’re welcome from 10:00am to find a seat and chat with the welcome team. The meeting itself starts at 10:30am.' },
+  { q: 'What happens during the meeting?', a: 'The morning host welcomes everyone and explains the plan. There’s live music and worship, a talk, optional childcare for babies and toddlers and activities for primary-aged children, and we finish with tea, coffee and conversation.' },
+  { q: 'Is there a talk?', a: 'Yes — a preacher will speak for about 30 minutes, opening up the Bible in a practical, accessible way.' },
+  { q: 'Can anyone come along?', a: 'Everyone is welcome, and you can join in at whatever level you feel comfortable. Please don’t feel you have to dress up — wear whatever you like.' },
+];
+---
+<BaseLayout title="I'm New" description="Visiting The Community Church in Honiton for the first time? Here's exactly what to expect on a Sunday." overHero={true}>
+  <!-- HERO -->
+  <section class="relative isolate flex min-h-[78svh] items-end overflow-hidden">
+    <Image src={heroImg} alt="People of all ages worshipping together with hands raised" loading="eager" class="parallax absolute inset-0 -z-20 h-full w-full object-cover" />
+    <div class="absolute inset-0 -z-10 bg-gradient-to-t from-ink via-ink/65 to-ink/35"></div>
+    <div class="absolute inset-0 -z-10 bg-gradient-to-b from-ink/50 to-transparent"></div>
+    <div class="mx-auto w-full max-w-8xl px-5 pb-20 pt-36 lg:px-8 lg:pb-24">
+      <p class="reveal flex items-center gap-3 font-display text-xs font-semibold uppercase tracking-[0.22em] text-clay-400 sm:text-sm">
+        <span class="h-px w-8 bg-clay-400"></span> First time? Start here
+      </p>
+      <h1 class="reveal mt-6 max-w-3xl font-display text-hero font-black text-white">You're very welcome here.</h1>
+      <p class="reveal mt-6 max-w-xl text-lg leading-relaxed text-paper/85" style="--reveal-delay:120ms">
+        Walking into somewhere new can feel daunting. So here's exactly what to expect — so you can relax and just enjoy your first Sunday with us.
+      </p>
+      <div class="reveal mt-9 flex flex-wrap items-center gap-3" style="--reveal-delay:240ms">
+        <Button href="#first-sunday" variant="primary">What happens on a Sunday</Button>
+        <Button href={mapsUrl} variant="outline" external>Get directions</Button>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT TO EXPECT — TIMELINE -->
+  <section id="first-sunday" class="section-flow scroll-mt-24 bg-paper py-20 lg:py-28">
+    <div class="mx-auto max-w-4xl px-5 lg:px-8">
+      <div class="reveal">
+        <p class="font-display text-sm font-semibold uppercase tracking-[0.18em] text-clay">Your first Sunday</p>
+        <h2 class="mt-4 font-display text-display font-black text-ink">A morning, minute by minute.</h2>
+      </div>
+      <ol class="mt-14 space-y-2">
+        {steps.map((step, i) => (
+          <li class="reveal relative flex gap-6 pb-8 last:pb-0" style={`--reveal-delay:${i * 70}ms`}>
+            <div class="relative flex flex-col items-center">
+              <span class="z-10 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-clay ring-4 ring-clay/15"></span>
+              {i < steps.length - 1 && <span class="absolute top-4 h-full w-px bg-ink/10"></span>}
+            </div>
+            <div class="-mt-1 pb-2">
+              {step.time && <p class="font-display text-sm font-bold uppercase tracking-wide text-clay">{step.time}</p>}
+              <h3 class="mt-0.5 font-display text-xl font-bold text-ink">{step.title}</h3>
+              <p class="mt-1.5 leading-relaxed text-ink/70">{step.body}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section-flow grain bg-ink py-20 text-paper lg:py-28">
+    <div class="mx-auto max-w-3xl px-5 lg:px-8">
+      <div class="reveal text-center">
+        <p class="font-display text-sm font-semibold uppercase tracking-[0.18em] text-clay-400">Good to know</p>
+        <h2 class="mt-4 font-display text-display font-black">Your questions, answered.</h2>
+      </div>
+      <div class="mt-12 divide-y divide-white/10">
+        {faqs.map((faq, i) => (
+          <details class="group reveal py-2" style={`--reveal-delay:${i * 60}ms`}>
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-4 py-4 font-display text-lg font-bold text-paper">
+              {faq.q}
+              <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/10 transition-colors group-open:bg-clay">
+                <svg class="h-4 w-4 transition-transform duration-200 group-open:rotate-45" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              </span>
+            </summary>
+            <p class="pb-5 pr-12 leading-relaxed text-paper/70">{faq.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- FINDING US + MAP -->
+  <section class="section-flow bg-paper py-20 lg:py-28">
+    <div class="mx-auto grid max-w-8xl items-center gap-12 px-5 lg:grid-cols-2 lg:gap-16 lg:px-8">
+      <div class="reveal">
+        <p class="font-display text-sm font-semibold uppercase tracking-[0.18em] text-clay">Finding us</p>
+        <h2 class="mt-4 font-display text-display font-black text-ink">We meet at {site.service.venue}.</h2>
+        <p class="mt-6 text-lg leading-relaxed text-ink/70">Right in the centre of {site.service.area}, {site.service.venue} is easy to find with step-free access and parking close by.</p>
+        <dl class="mt-8 space-y-5">
+          <div class="flex gap-4">
+            <dt class="font-display font-bold text-ink">Access</dt>
+            <dd class="text-ink/70">Step-free entry and accessible facilities throughout.</dd>
+          </div>
+          <div class="flex gap-4">
+            <dt class="font-display font-bold text-ink">Parking</dt>
+            <dd class="text-ink/70">Public car parks are a short walk away in the town centre.</dd>
+          </div>
+          <div class="flex gap-4">
+            <dt class="font-display font-bold text-ink">What to wear</dt>
+            <dd class="text-ink/70">Whatever's comfortable — there's no dress code at all.</dd>
+          </div>
+        </dl>
+        <div class="mt-8">
+          <Button href={mapsUrl} variant="ghost" external>Open in Google Maps</Button>
+        </div>
+      </div>
+      <div class="reveal overflow-hidden rounded-[2rem] shadow-xl ring-1 ring-ink/5" style="--reveal-delay:120ms">
+        <iframe
+          title={`Map showing ${site.service.venue}, ${site.service.area}`}
+          src={mapEmbed}
+          width="100%"
+          height="440"
+          style="border:0;"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section-flow grain bg-teal py-20 text-paper lg:py-24">
+    <div class="mx-auto max-w-3xl px-5 text-center lg:px-8">
+      <h2 class="reveal font-display text-display font-black">Still got a question?</h2>
+      <p class="reveal mx-auto mt-5 max-w-xl text-lg leading-relaxed text-paper/80" style="--reveal-delay:120ms">
+        We'd genuinely love to hear from you before you come — there's no such thing as a silly question.
+      </p>
+      <div class="reveal mt-9 flex flex-wrap justify-center gap-3" style="--reveal-delay:240ms">
+        <Button href={link('/contact')} variant="primary">Get in touch</Button>
+        <Button href={link('/sundays')} variant="outline">More about Sundays</Button>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

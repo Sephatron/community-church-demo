@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import { site } from '../../data/site';
+
+const policiesUrl = 'https://www.thecommunitychurch.co.uk/policies/';
+const policies = [
+  { title: 'Safeguarding Policy', body: 'We consider the safeguarding of children and vulnerable adults a serious matter, and are committed to keeping everyone safe.' },
+  { title: 'Data Protection (GDPR)', body: 'How we collect, store and use your personal data, in line with UK data-protection law.' },
+  { title: 'Privacy Notice', body: 'What information we hold about you, why we hold it, and your rights under GDPR.' },
+  { title: 'Complaints Procedure', body: 'If you have any concern about how your personal information is processed, here’s how to raise it.' },
+];
+---
+<BaseLayout title="Policies & Safeguarding" description="Safeguarding, data protection and privacy policies for The Community Church, Honiton.">
+  <PageHero
+    eyebrow="About us"
+    title="Policies & safeguarding."
+    subtitle="Keeping people safe and handling your information with care is a serious responsibility. Our key policies are below."
+    tone="ink"
+  />
+
+  <section class="section-flow bg-paper py-20 lg:py-28">
+    <div class="mx-auto max-w-8xl px-5 lg:px-8">
+      <div class="grid gap-5 md:grid-cols-2">
+        {policies.map((p, i) => (
+          <a href={policiesUrl} target="_blank" rel="noopener noreferrer" class="reveal group flex items-start gap-5 rounded-[1.75rem] bg-ink/[0.03] p-8 ring-1 ring-ink/10 transition-colors hover:bg-ink" style={`--reveal-delay:${i * 70}ms`}>
+            <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-clay/15 text-clay transition-colors group-hover:bg-clay group-hover:text-white">
+              <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none"><path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.6"/><path d="M14 3v5h5" stroke="currentColor" stroke-width="1.6"/></svg>
+            </span>
+            <div>
+              <h2 class="font-display text-xl font-bold text-ink transition-colors group-hover:text-paper">{p.title}</h2>
+              <p class="mt-2 leading-relaxed text-ink/70 transition-colors group-hover:text-paper/70">{p.body}</p>
+              <span class="mt-4 inline-flex items-center gap-1.5 font-display font-semibold text-clay transition-transform group-hover:translate-x-1">View policy →</span>
+            </div>
+          </a>
+        ))}
+      </div>
+      <p class="reveal mt-10 text-sm text-ink/50">For any safeguarding concern, please contact the church office on {site.contact.phone} or email {site.contact.email}.</p>
+    </div>
+  </section>
+</BaseLayout>

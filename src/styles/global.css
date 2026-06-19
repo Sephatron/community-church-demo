@@ -1,0 +1,148 @@
+/* Base tokens + global styles. Fonts are imported in BaseLayout.astro (self-hosted via @fontsource). */
+
+:root {
+  --paper: #FAF6EF;
+  --ink: #14100E;
+  --clay: #E64A19;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Accessible focus ring everywhere (bold palettes must stay keyboard-friendly). */
+:focus-visible {
+  outline: 3px solid var(--clay);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+::selection {
+  background: var(--clay);
+  color: #fff;
+}
+
+/* Scroll-reveal animation — progressive enhancement; content is visible if JS/observer is unavailable. */
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity 0.7s cubic-bezier(0.2, 0.7, 0.2, 1), transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Respect users who prefer less motion. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+  *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
+/* ---- Texture & scroll transitions (art-direction: grain + non-blocky flow) ---- */
+
+/* Subtle film-grain over solid-colour sections. Pure SVG noise — no network request. */
+.grain { position: relative; isolation: isolate; }
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  opacity: 0.55;
+  mix-blend-mode: overlay;
+}
+/* Content sits above the grain layer so text stays crisp. */
+.grain > * { position: relative; z-index: 1; }
+
+/* De-block the layout: each section curves up and overlaps the one before it. The
+   background colour is clipped by the radius, revealing the previous section's colour. */
+.section-flow {
+  position: relative;
+  margin-top: clamp(-3.5rem, -5vw, -2rem);
+  border-top-left-radius: clamp(1.75rem, 4vw, 3.25rem);
+  border-top-right-radius: clamp(1.75rem, 4vw, 3.25rem);
+}
+
+/* Parallax drift on hero imagery so scrolling feels continuous. Progressive enhancement:
+   browsers without scroll-driven animations just show a static (already cover-fit) image. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .parallax {
+      animation: parallax-drift linear both;
+      animation-timeline: view();
+      animation-range: cover;
+    }
+    @keyframes parallax-drift {
+      from { transform: translate3d(0, -8%, 0) scale(1.16); }
+      to   { transform: translate3d(0, 8%, 0) scale(1.16); }
+    }
+  }
+}
+
+/* Stacked-card depth: a soft shadow hugs each curved top edge (and a faint light rim
+   so the "card" reads over dark sections too). It drifts a little as you scroll, so the
+   page feels like panning down a physical stack of cards. */
+.section-flow::before {
+  content: "";
+  position: absolute;
+  left: 1.5%;
+  right: 1.5%;
+  top: 0;
+  height: 50px;
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+  box-shadow:
+    0 -18px 38px -8px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.07);
+  pointer-events: none;
+  z-index: 2;
+}
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .section-flow::before {
+      animation: card-lift linear both;
+      animation-timeline: view();
+      animation-range: cover;
+      will-change: transform, opacity;
+    }
+    @keyframes card-lift {
+      from { transform: translateY(16px); opacity: 0.4; }
+      to   { transform: translateY(-12px); opacity: 1; }
+    }
+  }
+}
+
+/* ---- Rich-text prose blocks for content pages (used on light/paper sections) ---- */
+.richtext { color: rgba(20, 16, 14, 0.78); line-height: 1.75; font-size: 1.0625rem; }
+.richtext > * + * { margin-top: 1.15rem; }
+.richtext h2 {
+  font-family: 'Archivo', system-ui, sans-serif; font-weight: 800; color: #14100E;
+  font-size: clamp(1.5rem, 3vw, 2rem); line-height: 1.15; letter-spacing: -0.015em; margin-top: 2.75rem;
+}
+.richtext h3 {
+  font-family: 'Archivo', system-ui, sans-serif; font-weight: 700; color: #14100E;
+  font-size: 1.2rem; margin-top: 1.9rem;
+}
+.richtext a { color: #C43C11; font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+.richtext strong { color: #14100E; font-weight: 700; }
+.richtext ul { list-style: none; display: flex; flex-direction: column; gap: 0.65rem; }
+.richtext ul li { position: relative; padding-left: 1.6rem; }
+.richtext ul li::before {
+  content: ""; position: absolute; left: 0; top: 0.62em; width: 0.5rem; height: 0.5rem;
+  border-radius: 9999px; background: #E64A19;
+}

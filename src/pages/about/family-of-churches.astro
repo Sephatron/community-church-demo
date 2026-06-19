@@ -1,0 +1,66 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import Button from '../../components/Button.astro';
+import { link } from '../../data/site';
+import heroImg from '../../assets/img/honiton-worship.jpg';
+
+const stats = [
+  { figure: '850+', label: 'churches' },
+  { figure: '60+', label: 'nations' },
+  { figure: '6', label: 'continents' },
+];
+const aims = ['Advancing the Kingdom', 'Training leaders', 'Restoring the Church', 'Starting churches', 'Making disciples', 'Reaching the nations'];
+---
+<BaseLayout title="Our Family of Churches" description="The Community Church belongs to Commission, one of the spheres of Newfrontiers — a worldwide family of churches on mission together.">
+  <PageHero
+    eyebrow="About us"
+    title="We’re part of something bigger."
+    subtitle="The Community Church belongs to Commission, one of the spheres of Newfrontiers — a worldwide family of churches on a mission together."
+    image={heroImg}
+    imageAlt="The wider church family gathered in worship"
+  />
+
+  <section class="section-flow bg-paper py-20 lg:py-28">
+    <div class="mx-auto max-w-8xl px-5 lg:px-8">
+      <div class="grid gap-12 lg:grid-cols-2 lg:gap-16">
+        <div class="reveal">
+          <p class="font-display text-sm font-semibold uppercase tracking-[0.18em] text-clay">Newfrontiers</p>
+          <h2 class="mt-4 font-display text-display font-black text-ink">A global family on mission.</h2>
+        </div>
+        <div class="reveal richtext" style="--reveal-delay:120ms">
+          <p>Newfrontiers is a worldwide family of churches together on a mission, with over 850 churches in more than 60 nations, on every continent. It aims to restore the church by making disciples, training leaders, planting churches and reaching the nations.</p>
+          <p>The first churches were vibrant communities where every member had a valuable role — caring for one another and their wider society, places where the Holy Spirit's gifts were excitingly evident. We're passionately committed to restoring church life in line with those principles, for the good of our society.</p>
+        </div>
+      </div>
+
+      <div class="mt-16 grid gap-5 sm:grid-cols-3">
+        {stats.map((s, i) => (
+          <div class="reveal rounded-[1.5rem] bg-ink p-8 text-center text-paper" style={`--reveal-delay:${i * 80}ms`}>
+            <p class="font-display text-5xl font-black text-clay-400">{s.figure}</p>
+            <p class="mt-2 font-medium uppercase tracking-wider text-paper/60">{s.label}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section-flow grain bg-teal py-20 text-paper lg:py-28">
+    <div class="mx-auto max-w-8xl px-5 lg:px-8">
+      <div class="reveal max-w-2xl">
+        <p class="font-display text-sm font-semibold uppercase tracking-[0.18em] text-sand">Commission</p>
+        <h2 class="mt-4 font-display text-display font-black">How we aim to build the church.</h2>
+        <p class="mt-5 text-lg leading-relaxed text-paper/80">Commission is a family of churches based in the UK, Spain, Portugal and beyond, working together to see the Kingdom advance through church planting, raising leaders, ministry with the poor, and going to the nations.</p>
+      </div>
+      <div class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {aims.map((a, i) => (
+          <div class="reveal flex items-center gap-4 rounded-2xl bg-white/[0.06] p-5 ring-1 ring-white/10" style={`--reveal-delay:${i * 50}ms`}>
+            <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-sand font-display font-bold text-ink">{i + 1}</span>
+            <span class="font-display text-lg font-semibold">{a}</span>
+          </div>
+        ))}
+      </div>
+      <div class="reveal mt-12"><Button href="https://www.commission.cc" variant="outline" external>Find out more about Commission</Button></div>
+    </div>
+  </section>
+</BaseLayout>

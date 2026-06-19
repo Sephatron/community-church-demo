@@ -1,0 +1,52 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import Button from '../components/Button.astro';
+import { link } from '../data/site';
+import heroImg from '../assets/img/honiton-worship.jpg';
+
+const cards = [
+  { title: 'Our Vision & Values', body: 'What drives us, and the kind of church we’re becoming.', href: '/about/vision-values' },
+  { title: 'What We Believe', body: 'The historic Christian faith, in plain language.', href: '/about/what-we-believe' },
+  { title: 'Meet the Team', body: 'The elders and trustees who serve our church family.', href: '/about/team' },
+  { title: 'Our Family of Churches', body: 'We belong to Commission, part of Newfrontiers.', href: '/about/family-of-churches' },
+  { title: 'Policies & Safeguarding', body: 'How we keep everyone safe, and handle your data.', href: '/about/policies' },
+];
+---
+<BaseLayout title="About Us" description="Who we are at The Community Church, Honiton — our vision, our beliefs, our team, and the family of churches we belong to.">
+  <PageHero
+    eyebrow="About us"
+    title="An ordinary church. An extraordinary God."
+    subtitle="We're a community of people in East Devon whose lives have been changed by Jesus — and we'd love you to be part of the story."
+    image={heroImg}
+    imageAlt="The church gathered in worship"
+  />
+
+  <section class="section-flow bg-paper py-20 lg:py-28">
+    <div class="mx-auto max-w-3xl px-5 text-center lg:px-8">
+      <p class="reveal richtext mx-auto text-lg">
+        The Community Church is a church family in Honiton. We're part of <strong>Commission</strong>, one of the spheres of <strong>Newfrontiers</strong> — a worldwide family of churches on a mission together. We believe the best of church happens in real, local community: worshipping God, following Jesus, and making a difference where we live.
+      </p>
+    </div>
+
+    <div class="mx-auto mt-16 grid max-w-8xl gap-5 px-5 sm:grid-cols-2 lg:grid-cols-3 lg:px-8">
+      {cards.map((c, i) => (
+        <a href={link(c.href)} class="reveal group flex flex-col rounded-[1.75rem] bg-ink/[0.03] p-8 ring-1 ring-ink/10 transition-colors hover:bg-ink hover:ring-ink" style={`--reveal-delay:${i * 70}ms`}>
+          <h2 class="font-display text-2xl font-bold text-ink transition-colors group-hover:text-paper">{c.title}</h2>
+          <p class="mt-3 flex-1 leading-relaxed text-ink/70 transition-colors group-hover:text-paper/70">{c.body}</p>
+          <span class="mt-6 inline-flex items-center gap-1.5 font-display font-semibold text-clay transition-transform group-hover:translate-x-1">Read more →</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="section-flow grain bg-clay py-20 text-white lg:py-24">
+    <div class="mx-auto max-w-3xl px-5 text-center lg:px-8">
+      <h2 class="reveal font-display text-display font-black">The best way to get to know us is to come.</h2>
+      <div class="reveal mt-9 flex flex-wrap justify-center gap-3" style="--reveal-delay:120ms">
+        <Button href={link('/im-new')} variant="ghost">Plan your first visit</Button>
+        <Button href={link('/sundays')} variant="outline">More about Sundays</Button>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

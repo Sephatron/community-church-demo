@@ -1,0 +1,70 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import Button from '../components/Button.astro';
+import { site } from '../data/site';
+
+const funds = [
+  { name: 'Regular Giving', body: 'Supporting the day-to-day life and mission of the church.' },
+  { name: 'Foodbank Giving', body: 'Helping us keep Honiton Foodbank stocked and open.' },
+  { name: 'Commission Offering', body: 'Supporting the wider family of churches we belong to.' },
+];
+---
+<BaseLayout title="Giving" description="Ways to give to The Community Church, Honiton — by standing order, bank transfer, card, or Gift Aid.">
+  <PageHero
+    eyebrow="Giving"
+    title="Generosity changes things."
+    subtitle="Everything we do is made possible by the generosity of ordinary people, given first and foremost in response to God's love for us."
+    tone="clay"
+  />
+
+  <section class="section-flow bg-paper py-20 lg:py-28">
+    <div class="mx-auto max-w-3xl px-5 text-center lg:px-8">
+      <p class="reveal richtext mx-auto text-lg">At The Community Church we all contribute to the life of our church in many ways — first and foremost in response to God's love for us. We encourage everyone who calls this their home church to give <strong>prayerfully, regularly, joyfully and generously</strong>, in proportion to their income.</p>
+    </div>
+
+    <!-- Ways to give -->
+    <div class="mx-auto mt-16 grid max-w-8xl gap-5 px-5 lg:grid-cols-3 lg:px-8">
+      <div class="reveal flex flex-col rounded-[1.75rem] bg-ink p-8 text-paper">
+        <h2 class="font-display text-xl font-bold">Give online</h2>
+        <p class="mt-3 flex-1 leading-relaxed text-paper/70">The quickest way — donate securely by card through ChurchSuite. No account needed; just choose “Donate with a card”.</p>
+        <a href={site.giveUrl} target="_blank" rel="noopener noreferrer" class="mt-6 inline-flex items-center justify-center gap-2 rounded-full bg-clay px-6 py-3.5 font-display font-semibold text-white transition-colors hover:bg-clay-600">Give online →</a>
+      </div>
+      <div class="reveal flex flex-col rounded-[1.75rem] bg-ink/[0.03] p-8 ring-1 ring-ink/10" style="--reveal-delay:100ms">
+        <h3 class="font-display text-xl font-bold text-ink">Standing order / transfer</h3>
+        <p class="mt-3 leading-relaxed text-ink/70">The most cost-effective way for us to receive your gift. Set up a payment to:</p>
+        <dl class="mt-5 space-y-2 rounded-2xl bg-ink/[0.04] p-5 text-sm">
+          <div class="flex justify-between gap-3"><dt class="text-ink/55">Account name</dt><dd class="font-semibold text-ink">Honiton Community Church</dd></div>
+          <div class="flex justify-between gap-3"><dt class="text-ink/55">Sort code</dt><dd class="font-semibold text-ink">40-52-40</dd></div>
+          <div class="flex justify-between gap-3"><dt class="text-ink/55">Account no.</dt><dd class="font-semibold text-ink">00010005</dd></div>
+        </dl>
+        <p class="mt-3 text-sm text-ink/55">Please use your initials and surname as the reference.</p>
+      </div>
+      <div class="reveal flex flex-col rounded-[1.75rem] bg-ink/[0.03] p-8 ring-1 ring-ink/10" style="--reveal-delay:200ms">
+        <h3 class="font-display text-xl font-bold text-ink">Gift Aid</h3>
+        <p class="mt-3 flex-1 leading-relaxed text-ink/70">As a registered charity we can reclaim <strong class="text-ink">25p in every £1</strong> you give, at no cost to you. If you're a UK taxpayer, completing a Gift Aid declaration makes your gift go further.</p>
+        <a href={site.giveUrl} target="_blank" rel="noopener noreferrer" class="mt-6 inline-flex items-center gap-1.5 font-display font-semibold text-clay hover:text-clay-600">Gift Aid form →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Funds -->
+  <section class="section-flow grain bg-teal py-20 text-paper lg:py-28">
+    <div class="mx-auto max-w-8xl px-5 lg:px-8">
+      <div class="reveal max-w-2xl">
+        <p class="font-display text-sm font-semibold uppercase tracking-[0.18em] text-sand">Where it goes</p>
+        <h2 class="mt-4 font-display text-display font-black">Choose where your gift makes a difference.</h2>
+        <p class="mt-5 text-lg leading-relaxed text-paper/80">When you give online you can choose which fund your gift supports.</p>
+      </div>
+      <div class="mt-12 grid gap-5 md:grid-cols-3">
+        {funds.map((f, i) => (
+          <div class="reveal rounded-[1.5rem] bg-white/[0.06] p-7 ring-1 ring-white/10" style={`--reveal-delay:${i * 80}ms`}>
+            <h3 class="font-display text-xl font-bold">{f.name}</h3>
+            <p class="mt-2.5 leading-relaxed text-paper/75">{f.body}</p>
+          </div>
+        ))}
+      </div>
+      <div class="reveal mt-12"><Button href={site.giveUrl} variant="ghost" external>Give online now</Button></div>
+    </div>
+  </section>
+</BaseLayout>

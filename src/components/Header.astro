@@ -1,0 +1,164 @@
+---
+import { nav, link, site } from '../data/site';
+import logoWhite from '../assets/img/logo-white.svg';
+
+interface Props {
+  overHero?: boolean; // true = transparent header overlaying a dark hero, turning solid on scroll
+}
+const { overHero = true } = Astro.props;
+---
+<header
+  id="site-header"
+  data-over-hero={overHero ? 'true' : 'false'}
+  class:list={[
+    'fixed inset-x-0 top-0 z-50 transition-all duration-300',
+    overHero ? 'bg-transparent' : 'bg-ink shadow-lg shadow-black/20',
+  ]}
+>
+  <div class="mx-auto flex max-w-8xl items-center justify-between gap-4 px-5 py-4 lg:px-8">
+    <a href={link('/')} class="flex shrink-0 items-center gap-3" aria-label={`${site.name} — home`}>
+      <img src={logoWhite.src} alt="" width="44" height="44" class="h-10 w-10 lg:h-11 lg:w-11" />
+      <span class="hidden font-display leading-none text-white sm:block">
+        <span class="block text-sm font-bold tracking-tight">The Community</span>
+        <span class="block text-sm font-bold tracking-tight">Church</span>
+      </span>
+    </a>
+
+    <nav class="hidden items-center gap-0.5 lg:flex" aria-label="Primary">
+      {nav.map((item) =>
+        item.children ? (
+          <div class="group relative">
+            <a
+              href={link(item.href)}
+              class="flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium text-white/90 transition-colors hover:bg-white/10 hover:text-white"
+            >
+              {item.label}
+              <svg class="h-3.5 w-3.5 opacity-70 transition-transform duration-200 group-hover:rotate-180" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                <path d="M3 5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </a>
+            <div class="invisible absolute left-0 top-full translate-y-1 pt-3 opacity-0 transition-all duration-200 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
+              <div class="w-64 rounded-2xl bg-paper p-2 shadow-2xl ring-1 ring-ink/5">
+                {item.children.map((c) => (
+                  <a href={link(c.href)} class="block rounded-xl px-4 py-2.5 text-sm font-medium text-ink/80 transition-colors hover:bg-clay hover:text-white">
+                    {c.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <a
+            href={link(item.href)}
+            class="rounded-full px-4 py-2 text-sm font-medium text-white/90 transition-colors hover:bg-white/10 hover:text-white"
+          >
+            {item.label}
+          </a>
+        )
+      )}
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <a
+        href={link('/give')}
+        class="hidden items-center rounded-full bg-clay px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-clay/25 transition-colors hover:bg-clay-600 sm:inline-flex"
+      >
+        Give
+      </a>
+      <button
+        id="menu-open"
+        type="button"
+        class="inline-flex h-11 w-11 items-center justify-center rounded-full text-white transition-colors hover:bg-white/10 lg:hidden"
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+      >
+        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div id="mobile-menu" class="fixed inset-0 z-[70] hidden lg:hidden">
+  <div class="absolute inset-0 bg-ink"></div>
+  <div class="relative flex h-full flex-col overflow-y-auto px-6 py-5">
+    <div class="flex items-center justify-between">
+      <span class="font-display text-lg font-bold text-white">The Community Church</span>
+      <button
+        id="menu-close"
+        type="button"
+        class="inline-flex h-11 w-11 items-center justify-center rounded-full text-white transition-colors hover:bg-white/10"
+        aria-label="Close menu"
+      >
+        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </button>
+    </div>
+    <nav class="mt-6 flex flex-col" aria-label="Mobile">
+      {nav.map((item) =>
+        item.children ? (
+          <details class="group border-b border-white/10">
+            <summary class="flex cursor-pointer list-none items-center justify-between py-3.5 font-display text-2xl font-bold text-white">
+              {item.label}
+              <svg class="h-5 w-5 transition-transform duration-200 group-open:rotate-180" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </summary>
+            <div class="flex flex-col gap-1.5 pb-4 pl-1">
+              {item.children.map((c) => (
+                <a href={link(c.href)} class="text-base text-white/65 transition-colors hover:text-clay-400">
+                  {c.label}
+                </a>
+              ))}
+            </div>
+          </details>
+        ) : (
+          <a href={link(item.href)} class="border-b border-white/10 py-3.5 font-display text-2xl font-bold text-white transition-colors hover:text-clay-400">
+            {item.label}
+          </a>
+        )
+      )}
+    </nav>
+    <a
+      href={link('/give')}
+      class="mt-8 inline-flex items-center justify-center rounded-full bg-clay px-6 py-4 font-display text-lg font-semibold text-white"
+    >
+      Give
+    </a>
+  </div>
+</div>
+
+<script>
+  // Make the header solid once the user scrolls past the top of a dark hero.
+  const header = document.getElementById('site-header');
+  if (header && header.dataset.overHero === 'true') {
+    const onScroll = () => {
+      const solid = window.scrollY > 40;
+      header.classList.toggle('bg-ink', solid);
+      header.classList.toggle('shadow-lg', solid);
+      header.classList.toggle('bg-transparent', !solid);
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
+
+  // Mobile menu open/close.
+  const menu = document.getElementById('mobile-menu');
+  const openBtn = document.getElementById('menu-open');
+  const closeBtn = document.getElementById('menu-close');
+  const setOpen = (open: boolean) => {
+    if (!menu) return;
+    menu.classList.toggle('hidden', !open);
+    document.body.style.overflow = open ? 'hidden' : '';
+    openBtn?.setAttribute('aria-expanded', String(open));
+  };
+  openBtn?.addEventListener('click', () => setOpen(true));
+  closeBtn?.addEventListener('click', () => setOpen(false));
+  menu?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') setOpen(false);
+  });
+</script>

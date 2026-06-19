@@ -1,0 +1,121 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import { sermons, series, speakers, soundcloudProfile } from '../data/sermons';
+
+const sorted = [...sermons].sort((a, b) => b.date.localeCompare(a.date));
+const fmt = (d: string) => new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+<BaseLayout title="Sermons" description="Browse and search sermons from The Community Church, Honiton — filter by series or speaker, and listen free.">
+  <PageHero
+    eyebrow="Sermons"
+    title="Catch up, dig deeper."
+    subtitle="Every talk, free to stream whenever suits you. Search the archive, or filter by series and speaker."
+    tone="ink"
+  />
+
+  <!-- Featured player -->
+  <section class="section-flow bg-paper py-16 lg:py-20">
+    <div class="mx-auto max-w-8xl px-5 lg:px-8">
+      <div class="reveal overflow-hidden rounded-[2rem] shadow-xl ring-1 ring-ink/5">
+        <iframe
+          title="The Community Church on SoundCloud"
+          width="100%" height="300" scrolling="no" frameborder="no" loading="lazy"
+          src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/thecommunitychurchhoniton&color=%23E64A19&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&visual=true"
+        ></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- Filterable library -->
+  <section class="section-flow grain bg-ink py-16 text-paper lg:py-24">
+    <div class="mx-auto max-w-8xl px-5 lg:px-8">
+      <!-- Controls -->
+      <div class="reveal flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div class="grid w-full gap-3 sm:grid-cols-2 lg:max-w-2xl lg:grid-cols-3">
+          <label class="sm:col-span-2 lg:col-span-1">
+            <span class="sr-only">Search sermons</span>
+            <input id="sermon-search" type="search" placeholder="Search title or scripture…" class="w-full rounded-full bg-white/[0.06] px-5 py-3 text-paper placeholder:text-paper/40 ring-1 ring-white/15 focus:ring-clay focus:outline-none" />
+          </label>
+          <label>
+            <span class="sr-only">Filter by series</span>
+            <select id="sermon-series" class="w-full appearance-none rounded-full bg-white/[0.06] px-5 py-3 text-paper ring-1 ring-white/15 focus:ring-clay focus:outline-none">
+              <option value="all">All series</option>
+              {series.map((s) => <option value={s}>{s}</option>)}
+            </select>
+          </label>
+          <label>
+            <span class="sr-only">Filter by speaker</span>
+            <select id="sermon-speaker" class="w-full appearance-none rounded-full bg-white/[0.06] px-5 py-3 text-paper ring-1 ring-white/15 focus:ring-clay focus:outline-none">
+              <option value="all">All speakers</option>
+              {speakers.map((s) => <option value={s}>{s}</option>)}
+            </select>
+          </label>
+        </div>
+        <p class="shrink-0 text-sm text-paper/55"><span id="sermon-count">{sorted.length}</span> sermons</p>
+      </div>
+
+      <!-- Cards -->
+      <div id="sermon-grid" class="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {sorted.map((s) => (
+          <article
+            data-sermon
+            data-series={s.series}
+            data-speaker={s.speaker}
+            data-search={`${s.title} ${s.speaker} ${s.scripture} ${s.series}`.toLowerCase()}
+            class="flex flex-col rounded-[1.5rem] bg-white/[0.04] p-7 ring-1 ring-white/10 transition-colors hover:bg-white/[0.07]"
+          >
+            <div class="flex items-center justify-between gap-3">
+              <span class="rounded-full bg-clay/20 px-3 py-1 text-xs font-semibold text-clay-400">{s.series}</span>
+              <time class="text-xs text-paper/50">{fmt(s.date)}</time>
+            </div>
+            <h2 class="mt-4 font-display text-xl font-bold leading-tight">{s.title}</h2>
+            <p class="mt-2 text-sm text-paper/55">{s.scripture}</p>
+            <div class="mt-auto flex items-center justify-between gap-3 pt-6">
+              <span class="text-sm font-medium text-paper/75">{s.speaker}</span>
+              <a href={soundcloudProfile} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 rounded-full bg-clay px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-clay-600">
+                <svg class="h-3.5 w-3.5" viewBox="0 0 16 16" fill="currentColor"><path d="M4.5 4.5v7l7-3.5z"/></svg> Listen
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+      <p id="sermon-empty" style="display:none" class="mt-12 text-center text-paper/60">No sermons match your filters. <button type="button" id="sermon-reset" class="font-semibold text-clay-400 underline">Clear filters</button></p>
+    </div>
+  </section>
+
+  <script>
+    const search = document.getElementById('sermon-search') as HTMLInputElement | null;
+    const seriesSel = document.getElementById('sermon-series') as HTMLSelectElement | null;
+    const speakerSel = document.getElementById('sermon-speaker') as HTMLSelectElement | null;
+    const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-sermon]'));
+    const countEl = document.getElementById('sermon-count');
+    const empty = document.getElementById('sermon-empty');
+    const reset = document.getElementById('sermon-reset');
+
+    function apply() {
+      const q = (search?.value || '').trim().toLowerCase();
+      const series = seriesSel?.value || 'all';
+      const speaker = speakerSel?.value || 'all';
+      let visible = 0;
+      cards.forEach((c) => {
+        const show =
+          (series === 'all' || c.dataset.series === series) &&
+          (speaker === 'all' || c.dataset.speaker === speaker) &&
+          (!q || (c.dataset.search || '').includes(q));
+        c.style.display = show ? '' : 'none';
+        if (show) visible++;
+      });
+      if (countEl) countEl.textContent = String(visible);
+      if (empty) empty.style.display = visible ? 'none' : '';
+    }
+    [search, seriesSel, speakerSel].forEach((el) => el?.addEventListener('input', apply));
+    reset?.addEventListener('click', () => {
+      if (search) search.value = '';
+      if (seriesSel) seriesSel.value = 'all';
+      if (speakerSel) speakerSel.value = 'all';
+      apply();
+    });
+    apply();
+  </script>
+</BaseLayout>

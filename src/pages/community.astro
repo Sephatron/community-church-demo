@@ -1,0 +1,89 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import Button from '../components/Button.astro';
+import { site, link } from '../data/site';
+import heroImg from '../assets/img/church-life.jpg';
+import foodbankImg from '../assets/img/community-people.jpg';
+import youthImg from '../assets/img/youth-event.jpg';
+import childrenImg from '../assets/img/christmas.jpg';
+import satellitesImg from '../assets/img/youth-trip.jpg';
+
+const cards = [
+  { title: 'Honiton Foodbank', body: 'Non-perishable food for anyone in Honiton facing hard times. Open Tuesdays & Fridays.', href: '/community/foodbank', img: foodbankImg },
+  { title: "Children's Ministry", body: 'Creche and Activ8 (ages 5–11) — worship, stories, friends and fun every Sunday.', href: '/community/children', img: childrenImg },
+  { title: 'Youth Ministry', body: 'For ages 11–16: Friday nights, Sundays, and an annual festival away.', href: '/community/youth', img: youthImg },
+  { title: 'Satellites', body: 'Our youth community and the festival we head to each year together.', href: '/community/satellites', img: satellitesImg },
+];
+
+const hcat = [
+  { title: 'Debt Advice Service', body: 'A free, confidential service helping anyone manage their finances — from budgeting to dealing with creditors.' },
+  { title: 'Many Hands', body: 'Practical help — gardening, decorating, moving, DIY — for those who can’t manage the job themselves. Labour is free.' },
+  { title: 'Training', body: 'HCAT offers training for churches and groups: serving the poor, mental-health awareness, safeguarding and more.' },
+];
+---
+<BaseLayout title="Community" description="The Community Church serving Honiton — the foodbank, children's and youth ministries, and the Honiton Community Action Team.">
+  <PageHero
+    eyebrow="Community"
+    title="Love that shows up."
+    subtitle="Following Jesus means rolling up our sleeves. Here's how we serve Honiton and the surrounding villages, day in, day out."
+    image={heroImg}
+    imageAlt="The church family together"
+  />
+
+  <section class="section-flow bg-paper py-20 lg:py-28">
+    <div class="mx-auto max-w-8xl px-5 lg:px-8">
+      <div class="reveal max-w-2xl">
+        <p class="font-display text-sm font-semibold uppercase tracking-[0.18em] text-clay">Get involved</p>
+        <h2 class="mt-4 font-display text-display font-black text-ink">Where life happens together.</h2>
+      </div>
+      <div class="mt-14 grid gap-5 sm:grid-cols-2">
+        {cards.map((c, i) => (
+          <a href={link(c.href)} class="reveal group relative flex h-80 flex-col justify-end overflow-hidden rounded-[1.75rem]" style={`--reveal-delay:${i * 80}ms`}>
+            <Image src={c.img} alt="" class="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+            <div class="absolute inset-0 bg-gradient-to-t from-ink/95 via-ink/45 to-ink/10"></div>
+            <div class="relative p-7">
+              <h3 class="font-display text-2xl font-bold text-white">{c.title}</h3>
+              <p class="mt-2 max-w-md leading-relaxed text-paper/80">{c.body}</p>
+              <span class="mt-4 inline-flex items-center gap-1.5 font-display font-semibold text-clay-400 transition-transform group-hover:translate-x-1">Explore →</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- HCAT -->
+  <section class="section-flow grain bg-ink py-20 text-paper lg:py-28">
+    <div class="mx-auto max-w-8xl px-5 lg:px-8">
+      <div class="reveal max-w-2xl">
+        <p class="font-display text-sm font-semibold uppercase tracking-[0.18em] text-clay-400">Honiton Community Action Team</p>
+        <h2 class="mt-4 font-display text-display font-black">Practical help, freely given.</h2>
+        <p class="mt-5 text-lg leading-relaxed text-paper/70">HCAT is our team reaching out into Honiton with real, hands-on support. Every enquiry is treated in confidence.</p>
+      </div>
+      <div class="mt-14 grid gap-5 md:grid-cols-3">
+        {hcat.map((h, i) => (
+          <div class="reveal rounded-[1.5rem] bg-white/[0.04] p-7 ring-1 ring-white/10" style={`--reveal-delay:${i * 70}ms`}>
+            <h3 class="font-display text-xl font-bold">{h.title}</h3>
+            <p class="mt-2.5 leading-relaxed text-paper/65">{h.body}</p>
+          </div>
+        ))}
+      </div>
+      <div class="reveal mt-12">
+        <Button href={link('/contact')} variant="outline">Get in touch with the team</Button>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-flow grain bg-clay py-20 text-white lg:py-24">
+    <div class="mx-auto max-w-3xl px-5 text-center lg:px-8">
+      <h2 class="reveal font-display text-display font-black">Lend a hand, or lend your giving.</h2>
+      <p class="reveal mx-auto mt-5 max-w-xl text-lg leading-relaxed text-white/85" style="--reveal-delay:120ms">None of this happens without volunteers and generous people behind it. There's a place for you.</p>
+      <div class="reveal mt-9 flex flex-wrap justify-center gap-3" style="--reveal-delay:240ms">
+        <Button href={site.giveUrl} variant="ghost" external>Give</Button>
+        <Button href={link('/contact')} variant="outline">Volunteer</Button>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

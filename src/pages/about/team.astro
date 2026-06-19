@@ -1,0 +1,68 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import Button from '../../components/Button.astro';
+import { link } from '../../data/site';
+import heroImg from '../../assets/img/community-people.jpg';
+
+const elders = [
+  { name: 'Adrian Birks', role: 'Lead Elder' },
+  { name: 'David Norris', role: 'Elder' },
+  { name: 'Joseph Whittaker', role: 'Elder' },
+  { name: 'Jamie Masters', role: 'Elder' },
+];
+const trustees = ['Steph Drake', 'Clara Rose', 'Gill Donne-Davis', 'Richard Kingdon', 'Tim Crone (Chair)'];
+const initials = (name: string) => name.replace(/\(.*\)/, '').trim().split(' ').map((w) => w[0]).slice(0, 2).join('');
+---
+<BaseLayout title="Meet the Team" description="The elders and trustees who lead and serve The Community Church, Honiton.">
+  <PageHero
+    eyebrow="About us"
+    title="Meet the team."
+    subtitle="Our church is led by a team of elders and overseen by trustees — ordinary people, given to serving this church family well."
+    image={heroImg}
+    imageAlt="A member of the team speaking on a Sunday"
+  />
+
+  <section class="section-flow bg-paper py-20 lg:py-28">
+    <div class="mx-auto max-w-8xl px-5 lg:px-8">
+      <div class="reveal max-w-2xl">
+        <p class="font-display text-sm font-semibold uppercase tracking-[0.18em] text-clay">Our elders</p>
+        <h2 class="mt-4 font-display text-display font-black text-ink">The people who lead us.</h2>
+      </div>
+      <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {elders.map((e, i) => (
+          <div class="reveal flex flex-col items-center rounded-[1.75rem] bg-ink/[0.03] p-8 text-center ring-1 ring-ink/10" style={`--reveal-delay:${i * 70}ms`}>
+            <span class="flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-clay to-clay-600 font-display text-3xl font-black text-white">{initials(e.name)}</span>
+            <h3 class="mt-5 font-display text-xl font-bold text-ink">{e.name}</h3>
+            <p class="mt-1 font-medium text-clay">{e.role}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section-flow grain bg-ink py-20 text-paper lg:py-28">
+    <div class="mx-auto max-w-8xl px-5 lg:px-8">
+      <div class="reveal max-w-2xl">
+        <p class="font-display text-sm font-semibold uppercase tracking-[0.18em] text-clay-400">Our trustees</p>
+        <h2 class="mt-4 font-display text-display font-black">Watching over the church.</h2>
+        <p class="mt-5 text-lg leading-relaxed text-paper/70">Our trustees carry responsibility for the good governance of the church as a registered charity (no. 1162085).</p>
+      </div>
+      <div class="mt-12 flex flex-wrap gap-3">
+        {trustees.map((t, i) => (
+          <span class="reveal inline-flex items-center gap-3 rounded-full bg-white/[0.06] py-2.5 pl-2.5 pr-6 ring-1 ring-white/10" style={`--reveal-delay:${i * 50}ms`}>
+            <span class="flex h-9 w-9 items-center justify-center rounded-full bg-teal-600 font-display text-sm font-bold text-white">{initials(t)}</span>
+            <span class="font-medium">{t}</span>
+          </span>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section-flow bg-paper py-16 lg:py-20">
+    <div class="mx-auto flex max-w-3xl flex-col items-center gap-6 px-5 text-center lg:px-8">
+      <p class="reveal text-lg text-ink/70">Want to talk to one of the team? We'd love to hear from you.</p>
+      <div class="reveal" style="--reveal-delay:120ms"><Button href={link('/contact')} variant="ghost">Get in touch</Button></div>
+    </div>
+  </section>
+</BaseLayout>

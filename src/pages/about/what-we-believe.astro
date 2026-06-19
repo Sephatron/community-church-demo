@@ -1,0 +1,69 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Button from '../../components/Button.astro';
+import PageHero from '../../components/PageHero.astro';
+import { link } from '../../data/site';
+
+// The Evangelical Alliance Basis of Faith, which The Community Church shares.
+const beliefs = [
+  'The one true God who lives eternally in three persons — the Father, the Son and the Holy Spirit.',
+  'The love, grace and sovereignty of God in creating, sustaining, ruling, redeeming and judging the world.',
+  'The divine inspiration and supreme authority of the Old and New Testament Scriptures, which are the written Word of God — fully trustworthy for faith and conduct.',
+  'The dignity of all people, made male and female in God’s image to love, be holy and care for creation, yet corrupted by sin.',
+  'The incarnation of God’s eternal Son, the Lord Jesus Christ — born of the virgin Mary; truly divine and truly human, yet without sin.',
+  'The atoning sacrifice of Christ on the cross: dying in our place, paying the price of sin and defeating evil, so reconciling us with God.',
+  'The bodily resurrection of Christ, the first fruits of our resurrection; his ascension to the Father, and his reign and mediation as the only Saviour of the world.',
+  'The justification of sinners solely by the grace of God through faith in Christ.',
+  'The ministry of God the Holy Spirit, who leads us to repentance, unites us with Christ, empowers our discipleship and enables our witness.',
+  'The church, the body of Christ both local and universal, the priesthood of all believers, given life by the Spirit and endowed with the Spirit’s gifts.',
+  'The personal and visible return of Jesus Christ to fulfil the purposes of God, who will raise all people to judgement and establish a new heaven and new earth.',
+];
+---
+<BaseLayout title="What We Believe" description="What The Community Church believes — we share the Evangelical Alliance basis of faith and affirm the Apostles’ Creed.">
+  <PageHero
+    eyebrow="About us"
+    title="What we believe."
+    subtitle="The Community Church holds to the historic Christian faith. We share the same statement of belief as the Evangelical Alliance."
+    tone="ink"
+  />
+
+  <section class="section-flow bg-paper py-20 lg:py-28">
+    <div class="mx-auto max-w-4xl px-5 lg:px-8">
+      <div class="reveal max-w-2xl">
+        <p class="font-display text-sm font-semibold uppercase tracking-[0.18em] text-clay">We believe in…</p>
+        <h2 class="mt-4 font-display text-display font-black text-ink">Eleven convictions at our core.</h2>
+      </div>
+      <ol class="mt-12 space-y-5">
+        {beliefs.map((b, i) => (
+          <li class="reveal flex gap-5" style={`--reveal-delay:${i * 40}ms`}>
+            <span class="shrink-0 font-display text-2xl font-black text-clay/40">{String(i + 1).padStart(2, '0')}</span>
+            <p class="border-b border-ink/10 pb-5 text-lg leading-relaxed text-ink/80">{b}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- Apostles' Creed -->
+  <section class="section-flow grain bg-ink py-20 text-paper lg:py-28">
+    <div class="mx-auto max-w-3xl px-5 text-center lg:px-8">
+      <p class="reveal font-display text-sm font-semibold uppercase tracking-[0.18em] text-clay-400">We also affirm</p>
+      <h2 class="reveal mt-4 font-display text-display font-black">The Apostles’ Creed</h2>
+      <div class="reveal mt-10 space-y-6 text-lg leading-relaxed text-paper/80" style="--reveal-delay:120ms">
+        <p>I believe in God, the Father almighty, creator of heaven and earth.</p>
+        <p>I believe in Jesus Christ, his only Son, our Lord, who was conceived by the Holy Spirit, born of the Virgin Mary, suffered under Pontius Pilate, was crucified, died, and was buried; he descended to the dead. On the third day he rose again; he ascended into heaven, he is seated at the right hand of the Father, and he will come to judge the living and the dead.</p>
+        <p>I believe in the Holy Spirit, the holy catholic Church, the communion of saints, the forgiveness of sins, the resurrection of the body, and the life everlasting. <span class="text-clay-400">Amen.</span></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-flow bg-paper py-16 lg:py-20">
+    <div class="mx-auto flex max-w-3xl flex-col items-center gap-6 px-5 text-center lg:px-8">
+      <p class="reveal text-lg text-ink/70">Got questions about any of this? That's completely normal — and we'd love to talk them through.</p>
+      <div class="reveal flex flex-wrap justify-center gap-3" style="--reveal-delay:120ms">
+        <Button href={link('/contact')} variant="ghost">Ask us anything</Button>
+        <Button href={link('/im-new')} variant="ghost">Plan a visit</Button>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

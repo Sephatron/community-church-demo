@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import Button from '../../components/Button.astro';
+import { link } from '../../data/site';
+import heroImg from '../../assets/img/youth-trip.jpg';
+---
+<BaseLayout title="Satellites" description="Satellites — the Christian Bible and music festival our youth head to each year, at the Bath & West Showground.">
+  <PageHero
+    eyebrow="Community"
+    title="Satellites."
+    subtitle="Every year our youth head away together to Satellites — a Christian Bible and music festival, and one of the highlights of the year."
+    image={heroImg}
+    imageAlt="The youth team away at a festival"
+  />
+
+  <section class="section-flow bg-paper py-20 lg:py-28">
+    <div class="mx-auto grid max-w-8xl gap-12 px-5 lg:grid-cols-2 lg:gap-16 lg:px-8">
+      <div class="reveal">
+        <p class="font-display text-sm font-semibold uppercase tracking-[0.18em] text-clay">The big weekend</p>
+        <h2 class="mt-4 font-display text-display font-black text-ink">A festival made for young people.</h2>
+      </div>
+      <div class="reveal richtext" style="--reveal-delay:120ms">
+        <p>Satellites is held at the <strong>Bath & West Showground</strong> near Shepton Mallet — a Christian Bible and music festival packed with worship, brilliant teaching and loads of fun activities for young people.</p>
+        <p>Like all our youth work, the trip is led by our Youth Overseer alongside a team of dedicated volunteers, so young people are well looked after the whole time they're away.</p>
+        <p>We also run a catering team while our youth are at Satellites — keeping everyone well fed across the weekend.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-flow grain bg-clay py-20 text-white lg:py-24">
+    <div class="mx-auto max-w-3xl px-5 text-center lg:px-8">
+      <h2 class="reveal font-display text-display font-black">Coming with us this year?</h2>
+      <p class="reveal mx-auto mt-5 max-w-xl text-lg leading-relaxed text-white/85" style="--reveal-delay:120ms">Speak to one of the youth team to find out about dates, costs and how to sign up.</p>
+      <div class="reveal mt-9 flex flex-wrap justify-center gap-3" style="--reveal-delay:240ms">
+        <Button href={link('/community/youth')} variant="ghost">Back to Youth</Button>
+        <Button href={link('/contact')} variant="outline">Get in touch</Button>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,26 @@
+---
+interface Props {
+  href: string;
+  variant?: 'primary' | 'outline' | 'ghost' | 'dark';
+  class?: string;
+  external?: boolean;
+}
+const { href, variant = 'primary', class: cls = '', external = false } = Astro.props;
+
+const base =
+  'group inline-flex items-center justify-center gap-2 rounded-full px-7 py-3.5 font-display text-base font-semibold tracking-tight transition-all duration-200 will-change-transform';
+const variants: Record<string, string> = {
+  primary: 'bg-clay text-white shadow-lg shadow-clay/25 hover:bg-clay-600 hover:-translate-y-0.5',
+  outline: 'border-2 border-white/70 text-white hover:bg-white hover:text-ink',
+  ghost: 'bg-paper text-ink ring-1 ring-ink/10 hover:bg-ink hover:text-paper',
+  dark: 'bg-ink text-paper hover:bg-teal hover:-translate-y-0.5',
+};
+const rel = external ? 'noopener noreferrer' : undefined;
+const target = external ? '_blank' : undefined;
+---
+<a href={href} class={`${base} ${variants[variant]} ${cls}`} rel={rel} target={target}>
+  <slot />
+  <svg class="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+    <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"></path>
+  </svg>
+</a>

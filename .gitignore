@@ -1,0 +1,13 @@
+# build output
+dist/
+# dependencies
+node_modules/
+# generated types
+.astro/
+# macOS
+.DS_Store
+# logs
+npm-debug.log*
+# env
+.env
+.env.production

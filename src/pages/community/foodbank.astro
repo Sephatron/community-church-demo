@@ -1,0 +1,114 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import Button from '../../components/Button.astro';
+import { site, link } from '../../data/site';
+
+const agencies = [
+  ['Children’s Centre, East Devon', '01395 226789'],
+  ['MIND, Devon', '01752 512280'],
+  ['St Paul’s Church, Honiton', '01404 44035'],
+  ['Honiton Town Council', '01404 42957'],
+  ['East Devon District Council', '01404 515616'],
+  ['Honiton JobCentre Plus', '0800 1690190'],
+  ['Citizens Advice, East Devon', '01395 265070'],
+];
+const donate = ['Tinned meat & fish', 'Tinned vegetables', 'Tinned fruit', 'Pasta & rice', 'Pasta sauce', 'Cereal', 'UHT milk', 'Tea & coffee', 'Biscuits', 'Toiletries', 'Toilet rolls', 'Washing powder'];
+const collection = ['Tesco', 'Lidl', 'Highfield Store, Dunkeswell', 'St Paul’s Church', 'Church of the Holy Family'];
+---
+<BaseLayout title="Honiton Foodbank" description="Honiton Foodbank — non-perishable food for anyone in Honiton and the surrounding villages facing financial difficulty. Open Tuesdays and Fridays.">
+  <PageHero
+    eyebrow="Community"
+    title="Honiton Foodbank."
+    subtitle="A local store of food, run by volunteers from churches and the wider community, for anyone in Honiton facing hard times."
+    tone="clay"
+  />
+
+  <!-- What we do -->
+  <section class="section-flow bg-paper py-20 lg:py-28">
+    <div class="mx-auto grid max-w-8xl gap-12 px-5 lg:grid-cols-2 lg:gap-16 lg:px-8">
+      <div class="reveal">
+        <p class="font-display text-sm font-semibold uppercase tracking-[0.18em] text-clay">What we do</p>
+        <h2 class="mt-4 font-display text-display font-black text-ink">Nobody in our town should go hungry.</h2>
+      </div>
+      <div class="reveal richtext" style="--reveal-delay:120ms">
+        <p>The foodbank is a local store of non-perishable food, operated by volunteers from churches and the wider community in and around Honiton. It's there for anyone experiencing financial difficulty.</p>
+        <p>If you're struggling to buy food and you live in Honiton or one of the surrounding villages, <strong>you no longer need an appointment</strong> — just come down during our opening hours and we'll provide you with food.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Opening times + access -->
+  <section class="section-flow grain bg-ink py-20 text-paper lg:py-28">
+    <div class="mx-auto max-w-8xl px-5 lg:px-8">
+      <div class="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
+        <div class="reveal">
+          <p class="font-display text-sm font-semibold uppercase tracking-[0.18em] text-clay-400">When we’re open</p>
+          <div class="mt-6 space-y-4">
+            <div class="flex items-baseline justify-between gap-4 border-b border-white/10 pb-4">
+              <span class="font-display text-2xl font-bold">Tuesday</span>
+              <span class="font-display text-2xl font-black text-clay-400">12:30 – 3:00pm</span>
+            </div>
+            <div class="flex items-baseline justify-between gap-4 border-b border-white/10 pb-4">
+              <span class="font-display text-2xl font-bold">Friday</span>
+              <span class="font-display text-2xl font-black text-clay-400">12:30 – 3:00pm</span>
+            </div>
+          </div>
+          <p class="mt-6 leading-relaxed text-paper/65">Find us at The King’s Centre, Lee’s Building, High Street, Honiton, EX14 1DH. We only deliver in exceptional circumstances — please call to discuss.</p>
+          <div class="mt-7 space-y-1.5 text-paper/80">
+            <p>📧 <a class="font-medium text-clay-400 hover:text-clay" href={`mailto:${site.contact.foodbankEmail}`}>{site.contact.foodbankEmail}</a></p>
+            <p>📞 <a class="font-medium text-clay-400 hover:text-clay" href={`tel:${site.contact.foodbankPhone.replace(/\s/g, '')}`}>{site.contact.foodbankPhone}</a></p>
+          </div>
+        </div>
+        <div class="reveal" style="--reveal-delay:120ms">
+          <p class="font-display text-sm font-semibold uppercase tracking-[0.18em] text-clay-400">Need a referral?</p>
+          <p class="mt-4 leading-relaxed text-paper/70">You can come straight to a session — but if you'd like a food voucher first, any of these partner agencies can issue one:</p>
+          <ul class="mt-6 space-y-2.5">
+            {agencies.map((a) => (
+              <li class="flex items-center justify-between gap-4 rounded-xl bg-white/[0.04] px-4 py-3 ring-1 ring-white/10">
+                <span class="font-medium">{a[0]}</span>
+                <span class="shrink-0 text-paper/60">{a[1]}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Donate -->
+  <section class="section-flow bg-paper py-20 lg:py-28">
+    <div class="mx-auto max-w-8xl px-5 lg:px-8">
+      <div class="reveal max-w-2xl">
+        <p class="font-display text-sm font-semibold uppercase tracking-[0.18em] text-clay">How to help</p>
+        <h2 class="mt-4 font-display text-display font-black text-ink">Donate food, or give.</h2>
+        <p class="mt-5 text-lg leading-relaxed text-ink/70">Without donations, there's no food and no foodbank. You can drop non-perishable items at any of our collection points around Honiton, or give financially so we can buy what we're short of.</p>
+      </div>
+      <div class="mt-12 grid gap-10 lg:grid-cols-2">
+        <div class="reveal">
+          <h3 class="font-display text-xl font-bold text-ink">Most-needed items</h3>
+          <div class="mt-5 flex flex-wrap gap-2.5">
+            {donate.map((d) => <span class="rounded-full bg-ink/[0.04] px-4 py-2 text-sm font-medium text-ink/75 ring-1 ring-ink/10">{d}</span>)}
+          </div>
+        </div>
+        <div class="reveal" style="--reveal-delay:120ms">
+          <h3 class="font-display text-xl font-bold text-ink">Collection points</h3>
+          <div class="mt-5 flex flex-wrap gap-2.5">
+            {collection.map((c) => <span class="rounded-full bg-ink/[0.04] px-4 py-2 text-sm font-medium text-ink/75 ring-1 ring-ink/10">{c}</span>)}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-flow grain bg-clay py-20 text-white lg:py-24">
+    <div class="mx-auto max-w-3xl px-5 text-center lg:px-8">
+      <h2 class="reveal font-display text-display font-black">Stand with your neighbours.</h2>
+      <p class="reveal mx-auto mt-5 max-w-xl text-lg leading-relaxed text-white/85" style="--reveal-delay:120ms">Give to the foodbank, or join the team of volunteers who keep it running.</p>
+      <div class="reveal mt-9 flex flex-wrap justify-center gap-3" style="--reveal-delay:240ms">
+        <Button href={site.giveUrl} variant="ghost" external>Give to the foodbank</Button>
+        <Button href={link('/contact')} variant="outline">Volunteer with us</Button>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

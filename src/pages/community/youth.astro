@@ -1,0 +1,52 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import Button from '../../components/Button.astro';
+import { link } from '../../data/site';
+import heroImg from '../../assets/img/youth-event.jpg';
+
+const rhythm = [
+  { name: 'Friday Youth', when: 'Every Friday in term time', body: 'Fun activities, video games and snacks — and most weeks an interactive look at the Bible, where young people are free to ask the hard questions.' },
+  { name: 'Sunday Youth', when: '2nd & 4th Sundays', body: 'Our youth take time out from the main meeting to play games and dig into the Bible together, thinking about life’s real challenges.' },
+  { name: 'Satellites', when: 'Every year', body: 'A Christian Bible and music festival at the Bath & West Showground — teaching, worship and a brilliant weekend away.' },
+];
+---
+<BaseLayout title="Youth Ministry" description="Youth ministry at The Community Church, Honiton — for ages 11–16. Friday nights, Sundays, and the annual Satellites festival.">
+  <PageHero
+    eyebrow="Community"
+    title="Youth."
+    subtitle="For ages 11–16: a place to have fun, build real friendships, ask honest questions, and explore what it means to follow Jesus."
+    image={heroImg}
+    imageAlt="Young people at a summer youth event"
+  />
+
+  <section class="section-flow bg-paper py-20 lg:py-28">
+    <div class="mx-auto max-w-8xl px-5 lg:px-8">
+      <div class="reveal max-w-2xl">
+        <p class="font-display text-sm font-semibold uppercase tracking-[0.18em] text-clay">When we meet</p>
+        <h2 class="mt-4 font-display text-display font-black text-ink">Three ways to get stuck in.</h2>
+      </div>
+      <div class="mt-14 grid gap-5 lg:grid-cols-3">
+        {rhythm.map((r, i) => (
+          <div class="reveal flex flex-col rounded-[1.75rem] bg-ink/[0.03] p-8 ring-1 ring-ink/10" style={`--reveal-delay:${i * 90}ms`}>
+            <span class="font-display text-sm font-semibold uppercase tracking-wider text-clay">{r.when}</span>
+            <h3 class="mt-2 font-display text-2xl font-black text-ink">{r.name}</h3>
+            <p class="mt-3 flex-1 leading-relaxed text-ink/70">{r.body}</p>
+          </div>
+        ))}
+      </div>
+      <p class="reveal mt-10 text-ink/60">Led by our Youth Overseer alongside a team of dedicated, DBS-checked volunteers.</p>
+    </div>
+  </section>
+
+  <section class="section-flow grain bg-ink py-20 text-paper lg:py-24">
+    <div class="mx-auto max-w-3xl px-5 text-center lg:px-8">
+      <h2 class="reveal font-display text-display font-black">New to youth? Just turn up.</h2>
+      <p class="reveal mx-auto mt-5 max-w-xl text-lg leading-relaxed text-paper/75" style="--reveal-delay:120ms">Bring a mate. There's always space, snacks and a warm welcome.</p>
+      <div class="reveal mt-9 flex flex-wrap justify-center gap-3" style="--reveal-delay:240ms">
+        <Button href={link('/community/satellites')} variant="ghost">About Satellites</Button>
+        <Button href={link('/contact')} variant="outline">Ask a question</Button>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
