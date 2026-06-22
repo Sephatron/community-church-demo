@@ -1,0 +1,7 @@
+name = "sveltia-cms-auth"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+# No routes or KV bindings needed — this Worker only handles /auth and /callback.
+# Secrets (GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET) are set via `wrangler secret put`
+# or the Cloudflare dashboard — never committed to the repo.

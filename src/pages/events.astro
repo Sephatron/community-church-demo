@@ -1,14 +1,30 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
-import { events, eventCategories } from '../data/events';
 
-// Recurring rhythm first, then one-offs by date.
-const sorted = [...events].sort((a, b) => {
-  if (a.recurring && !b.recurring) return -1;
-  if (!a.recurring && b.recurring) return 1;
-  return (a.date || '').localeCompare(b.date || '');
-});
+// The canonical category list. Kept here (not imported from data/events.ts) so
+// this page is fully self-contained from the Content Collection going forward.
+// Must stay in sync with the enum in src/content/config.ts.
+const eventCategories = [
+  'Whole church',
+  'Youth',
+  'Children & Families',
+  'Foodbank',
+  'Community',
+] as const;
+
+// Load all events from the Content Collection and apply the same sort as before:
+// recurring rhythm first (Weekly badge), then one-offs sorted ascending by date.
+const rawEvents = await getCollection('events');
+const sorted = rawEvents
+  .map((entry) => entry.data)
+  .sort((a, b) => {
+    if (a.recurring && !b.recurring) return -1;
+    if (!a.recurring && b.recurring) return 1;
+    return (a.date ?? '').localeCompare(b.date ?? '');
+  });
+
 const catColour: Record<string, string> = {
   'Whole church': 'bg-clay/15 text-clay-600',
   'Youth': 'bg-teal/15 text-teal-600',

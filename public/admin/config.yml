@@ -1,0 +1,161 @@
+# Sveltia CMS configuration for The Community Church demo.
+# Sveltia is Decap-compatible — field widgets and collection types are identical.
+# Docs: https://github.com/sveltia/sveltia-cms
+
+# Disable the live-preview pane — it renders raw JSON field values which is
+# confusing for non-technical editors. Per-collection overrides can re-enable it
+# selectively if needed.
+editor:
+  preview: false
+
+site_url: https://sephatron.github.io/community-church-demo
+display_url: https://sephatron.github.io/community-church-demo
+
+backend:
+  name: github
+  repo: Sephatron/community-church-demo
+  branch: main
+  # The OAuth proxy Worker URL — replace with the deployed Worker URL after
+  # Joe deploys sveltia-cms-auth (see docs/WIRING_STEPS.md).
+  # Until then, editors can authenticate via a Personal Access Token in Sveltia's
+  # settings panel (no backend change needed for that path).
+  base_url: https://sveltia-cms-auth.YOUR-SUBDOMAIN.workers.dev
+
+# Cloudflare Pages serves at root, so the public path is simply /.
+public_folder: /
+media_folder: public/uploads
+media_public_folder: /uploads
+
+# ---------------------------------------------------------------------------
+# Events collection — maps to src/content/events/*.json
+# The folder, extension, and format must match the files the Astro Content
+# Collection reads. JSON with no frontmatter delimiter.
+# ---------------------------------------------------------------------------
+collections:
+  - name: events
+    label: Events
+    label_singular: Event
+    folder: src/content/events
+    create: true
+    delete: true
+    extension: json
+    format: json
+    # Slug is derived from the title field, lowercased and hyphenated by Sveltia.
+    slug: "{{slug}}"
+    summary: "{{title}} — {{when}}"
+    fields:
+      - label: Title
+        name: title
+        widget: string
+        hint: "e.g. \"Play On — Live Music Night\""
+
+      - label: Category
+        name: category
+        widget: select
+        options:
+          - Whole church
+          - Youth
+          - Children & Families
+          - Foodbank
+          - Community
+
+      - label: Date
+        name: date
+        widget: datetime
+        format: YYYY-MM-DD
+        date_format: DD MMMM YYYY
+        time_format: false
+        required: false
+        hint: "Leave blank for recurring events (Sundays, Foodbank, Youth)."
+
+      - label: When (display text)
+        name: when
+        widget: string
+        hint: "Human-readable. e.g. \"Every Sunday · 10:30am\" or \"Friday 11 July · 7:00–9:30pm\""
+
+      - label: Location
+        name: location
+        widget: string
+        hint: "e.g. \"The Beehive, Honiton\""
+
+      - label: Description
+        name: description
+        widget: text
+        hint: "One or two sentences shown on the event card."
+
+      - label: Recurring
+        name: recurring
+        widget: boolean
+        default: false
+        hint: "Tick for standing weekly/regular rhythms (shows \"Weekly\" badge and sorts to the top)."
+
+  # ---------------------------------------------------------------------------
+  # Site settings — single file at src/content/site-settings/settings.json.
+  # Exposes safe theme tokens and key facts without opening the codebase.
+  # ---------------------------------------------------------------------------
+  - name: site-settings
+    label: Site Settings & Theme
+    # `files` type = a named list of individual files rather than a folder of entries.
+    files:
+      - label: Settings
+        name: settings
+        file: src/content/site-settings/settings.json
+        fields:
+          - label: "Service — Day"
+            name: serviceDay
+            widget: string
+            hint: "e.g. \"Sundays\""
+
+          - label: "Service — Time"
+            name: serviceTime
+            widget: string
+            hint: "e.g. \"10:30am\""
+
+          - label: "Service — Venue"
+            name: serviceVenue
+            widget: string
+            hint: "e.g. \"The Beehive\""
+
+          - label: "Service — Area"
+            name: serviceArea
+            widget: string
+            hint: "e.g. \"Honiton\""
+
+          - label: "Service — Doors open"
+            name: serviceArrive
+            widget: string
+            hint: "e.g. \"10:00am\""
+
+          - label: "Contact — Email"
+            name: contactEmail
+            widget: string
+            hint: "Main office email address."
+
+          - label: "Contact — Phone"
+            name: contactPhone
+            widget: string
+            hint: "e.g. \"01404 43800\""
+
+          - label: "Theme — Clay (accent)"
+            name: colorClay
+            widget: color
+            default: "#C43C11"
+            hint: "Primary brand accent colour. Used for headings, badges, and buttons."
+
+          - label: "Theme — Paper (background)"
+            name: colorPaper
+            widget: color
+            default: "#FAF6EF"
+            hint: "Site background colour."
+
+          - label: "Theme — Ink (text)"
+            name: colorInk
+            widget: color
+            default: "#14100E"
+            hint: "Main text colour. Keep contrast ratio vs Paper above 7:1 for accessibility."
+
+          - label: "Hero accent text"
+            name: heroAccentText
+            widget: string
+            default: "Jesus"
+            hint: "The highlighted word in \"Lives changed by ___ in East Devon\" on the homepage."
