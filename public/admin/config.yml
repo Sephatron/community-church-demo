@@ -19,7 +19,7 @@ backend:
   # Joe deploys sveltia-cms-auth (see docs/WIRING_STEPS.md).
   # Until then, editors can authenticate via a Personal Access Token in Sveltia's
   # settings panel (no backend change needed for that path).
-  base_url: https://sveltia-cms-auth.YOUR-SUBDOMAIN.workers.dev
+  base_url: https://sveltia-cms-auth.jwhittaker.workers.dev
 
 # Cloudflare Pages serves at root, so the public path is simply /.
 public_folder: /
