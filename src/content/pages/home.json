@@ -1,0 +1,54 @@
+{
+  "hero": {
+    "eyebrow": "The Community Church · Honiton",
+    "headingBefore": "Lives changed by",
+    "accentWord": "Jesus",
+    "headingAfter": "in East Devon.",
+    "subtitle": "An ordinary community of people finding a bigger story. We meet at {venue}, {area}, every Sunday at {time} — and you're warmly invited.",
+    "primaryCtaLabel": "Plan your first visit",
+    "secondaryCtaLabel": "What happens on a Sunday"
+  },
+  "welcome": {
+    "eyebrow": "Welcome",
+    "heading": "However you arrive, there's a place for you here.",
+    "body1": "Whether you've followed Jesus for decades, wandered away years ago, or you're simply curious — you'll find a warm welcome, honest conversation and zero pressure. Come exactly as you are.",
+    "body2": "",
+    "primaryCtaLabel": "I'm new here",
+    "secondaryCtaLabel": "Our vision & values",
+    "badgeNumber": "90",
+    "badgeCaption": "music, teaching\n& good coffee"
+  },
+  "planSunday": {
+    "eyebrow": "Plan your Sunday",
+    "heading": "Everything you need before you come.",
+    "card1Title": "When",
+    "card1Body": "{day} at {time}. Doors and coffee from {arrive} — arrive early and say hello.",
+    "card2Title": "Where",
+    "card2Body": "{venue}, in the centre of {area}. Step-free access and parking nearby.",
+    "card3Title": "What to expect",
+    "card3Body": "Around 90 minutes of live music, a down-to-earth talk, groups for kids and youth, and time over coffee afterwards."
+  },
+  "sermons": {
+    "eyebrow": "Sermons",
+    "heading": "Catch up on a recent talk.",
+    "body": "Missed a Sunday, or want to go deeper during the week? Every talk is free to stream, whenever suits you.",
+    "ctaLabel": "Browse all sermons"
+  },
+  "findYourPlace": {
+    "eyebrow": "Find your place",
+    "heading": "There's far more to us than Sunday.",
+    "tile1Title": "Sundays",
+    "tile1Blurb": "What a morning looks like →",
+    "tile2Title": "Children & Youth",
+    "tile2Blurb": "Space to grow and belong →",
+    "tile3Title": "Honiton Foodbank",
+    "tile3Blurb": "Practical love for our town →",
+    "tile4Title": "Satellites",
+    "tile4Blurb": "Our youth community →"
+  },
+  "give": {
+    "heading": "Partner with what God is doing in East Devon.",
+    "body": "Everything we do — Sundays, the foodbank, work with families and young people — is made possible by the generosity of ordinary people. Thank you.",
+    "ctaLabel": "Give to the church"
+  }
+}

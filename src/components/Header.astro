@@ -1,11 +1,20 @@
 ---
-import { nav, link, site } from '../data/site';
+import { getEntry } from 'astro:content';
+import { nav as fallbackNav, link, site } from '../data/site';
 import logoWhite from '../assets/img/logo-white.svg';
 
 interface Props {
   overHero?: boolean; // true = transparent header overlaying a dark hero, turning solid on scroll
 }
 const { overHero = true } = Astro.props;
+
+// Read the nav from the content collection. If the file is missing or the
+// entry has no items (e.g. accidentally cleared in the CMS), fall back to the
+// nav array in site.ts so the header always renders.
+const navEntry = await getEntry('navigation', 'main');
+const nav = (navEntry?.data?.items && navEntry.data.items.length > 0)
+  ? navEntry.data.items
+  : fallbackNav;
 ---
 <header
   id="site-header"
@@ -26,7 +35,7 @@ const { overHero = true } = Astro.props;
 
     <nav class="hidden items-center gap-0.5 lg:flex" aria-label="Primary">
       {nav.map((item) =>
-        item.children ? (
+        item.children && item.children.length > 0 ? (
           <div class="group relative">
             <a
               href={link(item.href)}
@@ -99,7 +108,7 @@ const { overHero = true } = Astro.props;
     </div>
     <nav class="mt-6 flex flex-col" aria-label="Mobile">
       {nav.map((item) =>
-        item.children ? (
+        item.children && item.children.length > 0 ? (
           <details class="group border-b border-white/10">
             <summary class="flex cursor-pointer list-none items-center justify-between py-3.5 font-display text-2xl font-bold text-white">
               {item.label}

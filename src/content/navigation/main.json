@@ -1,0 +1,41 @@
+{
+  "items": [
+    {
+      "label": "I'm New",
+      "href": "/im-new"
+    },
+    {
+      "label": "Sundays",
+      "href": "/sundays"
+    },
+    {
+      "label": "About",
+      "href": "/about",
+      "children": [
+        { "label": "Our Vision & Values", "href": "/about/vision-values" },
+        { "label": "What We Believe", "href": "/about/what-we-believe" },
+        { "label": "Meet the Team", "href": "/about/team" },
+        { "label": "Our Family of Churches", "href": "/about/family-of-churches" },
+        { "label": "Policies & Safeguarding", "href": "/about/policies" }
+      ]
+    },
+    {
+      "label": "Community",
+      "href": "/community",
+      "children": [
+        { "label": "Honiton Foodbank", "href": "/community/foodbank" },
+        { "label": "Children's Ministry", "href": "/community/children" },
+        { "label": "Youth Ministry", "href": "/community/youth" },
+        { "label": "Satellites", "href": "/community/satellites" }
+      ]
+    },
+    {
+      "label": "Sermons",
+      "href": "/sermons"
+    },
+    {
+      "label": "What's On",
+      "href": "/events"
+    }
+  ]
+}

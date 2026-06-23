@@ -90,8 +90,54 @@ collections:
         hint: "Tick for standing weekly/regular rhythms (shows \"Weekly\" badge and sorts to the top)."
 
   # ---------------------------------------------------------------------------
+  # Navigation — single file at src/content/navigation/main.json.
+  # Exposes the main menu as editable data. Both Header and Footer read from
+  # this file. Labels are the high-frequency edit; hrefs change rarely.
+  # ---------------------------------------------------------------------------
+  - name: navigation
+    label: Navigation
+    files:
+      - label: Main Menu
+        name: main
+        file: src/content/navigation/main.json
+        fields:
+          - label: Menu Items
+            name: items
+            widget: list
+            label_singular: Menu Item
+            hint: "The items that appear in the header navigation and footer. Drag to reorder."
+            fields:
+              - label: Label
+                name: label
+                widget: string
+                hint: "The text shown in the menu. e.g. \"I'm New\" or \"About\""
+
+              - label: URL / Path
+                name: href
+                widget: string
+                hint: "Internal path (e.g. /about) or full external URL (e.g. https://…). Must start with / for internal pages."
+
+              - label: Dropdown items
+                name: children
+                widget: list
+                required: false
+                label_singular: Dropdown Item
+                hint: "Optional sub-menu items shown when hovering this menu item. Leave empty for top-level links with no dropdown."
+                fields:
+                  - label: Label
+                    name: label
+                    widget: string
+                    hint: "e.g. \"Our Vision & Values\""
+
+                  - label: URL / Path
+                    name: href
+                    widget: string
+                    hint: "e.g. /about/vision-values"
+
+  # ---------------------------------------------------------------------------
   # Site settings — single file at src/content/site-settings/settings.json.
-  # Exposes safe theme tokens and key facts without opening the codebase.
+  # Exposes safe theme tokens, service facts, contact details, brand strings,
+  # socials, and footer copy without opening the codebase.
   # ---------------------------------------------------------------------------
   - name: site-settings
     label: Site Settings & Theme
@@ -101,31 +147,38 @@ collections:
         name: settings
         file: src/content/site-settings/settings.json
         fields:
+          # ---- Service facts ----
           - label: "Service — Day"
             name: serviceDay
             widget: string
-            hint: "e.g. \"Sundays\""
+            hint: "e.g. \"Sundays\". Used everywhere the service day appears."
 
           - label: "Service — Time"
             name: serviceTime
             widget: string
-            hint: "e.g. \"10:30am\""
+            hint: "e.g. \"10:30am\". Used everywhere the service time appears."
 
           - label: "Service — Venue"
             name: serviceVenue
             widget: string
-            hint: "e.g. \"The Beehive\""
+            hint: "e.g. \"The Beehive\". Used in the footer and homepage cards."
 
-          - label: "Service — Area"
+          - label: "Service — Area / Town"
             name: serviceArea
             widget: string
-            hint: "e.g. \"Honiton\""
+            hint: "e.g. \"Honiton\". Used alongside the venue in several places."
 
           - label: "Service — Doors open"
             name: serviceArrive
             widget: string
-            hint: "e.g. \"10:00am\""
+            hint: "e.g. \"10:00am\". Shown on the homepage Plan Your Sunday card."
 
+          - label: "Service — Duration"
+            name: serviceDuration
+            widget: string
+            hint: "e.g. \"around 90 minutes\". Shown on the homepage Plan Your Sunday card."
+
+          # ---- Contact ----
           - label: "Contact — Email"
             name: contactEmail
             widget: string
@@ -136,6 +189,80 @@ collections:
             widget: string
             hint: "e.g. \"01404 43800\""
 
+          - label: "Contact — Office address"
+            name: contactOffice
+            widget: string
+            hint: "Full postal address shown on the contact page."
+
+          - label: "Contact — Foodbank email"
+            name: contactFoodbankEmail
+            widget: string
+            hint: "Foodbank-specific email address."
+
+          - label: "Contact — Foodbank phone"
+            name: contactFoodbankPhone
+            widget: string
+            hint: "Foodbank-specific phone number."
+
+          # ---- Brand / identity ----
+          - label: "Church name"
+            name: churchName
+            widget: string
+            hint: "The full church name. Used in the browser tab title and meta tags."
+
+          - label: "Tagline"
+            name: churchTagline
+            widget: string
+            hint: "One-sentence tagline shown in the footer and page meta description."
+
+          - label: "Family of churches line"
+            name: churchFamily
+            widget: string
+            hint: "The line about Commission / Newfrontiers shown in the footer and the homepage Welcome section."
+
+          - label: "Charity number"
+            name: charityNo
+            widget: string
+            hint: "Registered charity number shown in the footer."
+
+          # ---- Social URLs ----
+          - label: "Social — Facebook URL"
+            name: socialFacebook
+            widget: string
+            hint: "Full URL to the church Facebook page."
+
+          - label: "Social — Instagram URL"
+            name: socialInstagram
+            widget: string
+            hint: "Full URL to the church Instagram profile."
+
+          - label: "Social — Twitter / X URL"
+            name: socialTwitter
+            widget: string
+            hint: "Full URL to the church Twitter/X account."
+
+          - label: "Social — SoundCloud URL"
+            name: socialSoundCloud
+            widget: string
+            hint: "Full URL to the church SoundCloud profile (used for the sermon player)."
+
+          # ---- Giving ----
+          - label: "Give — external URL"
+            name: giveUrl
+            widget: string
+            hint: "The URL of the external giving page (e.g. the real thecommunitychurch.co.uk giving page). The demo does not process payments."
+
+          # ---- Footer copy ----
+          # Note: the "Visit us" sentence in the footer is rendered directly in
+          # Footer.astro with bold spans — it is not a CMS-editable token template.
+          # The service facts above (venue, area, time) control what appears there.
+
+          - label: "Footer — Bottom line"
+            name: footerBottomLine
+            widget: string
+            hint: "The small text at the very bottom of the footer (e.g. the demo disclaimer)."
+
+          # ---- Theme tokens ----
           - label: "Theme — Clay (accent)"
             name: colorClay
             widget: color
@@ -158,4 +285,260 @@ collections:
             name: heroAccentText
             widget: string
             default: "Jesus"
-            hint: "The highlighted word in \"Lives changed by ___ in East Devon\" on the homepage."
+            hint: "The highlighted word in \"Lives changed by ___ in East Devon\" on the homepage. Note: the Homepage entry also has an Accent Word field — the Homepage entry takes priority if set."
+
+  # ---------------------------------------------------------------------------
+  # Pages — per-page content entries. Phase A: Homepage only.
+  # Each section is wrapped in an object widget with collapsed: true so the
+  # editor sees six tidy collapsible section headings (Hero, Welcome,
+  # Plan Your Sunday, Sermons, Find Your Place, Give) rather than a wall of
+  # ~38 flat fields. The JSON shape matches src/content/pages/home.json.
+  # ---------------------------------------------------------------------------
+  - name: pages
+    label: Pages
+    files:
+      - label: Homepage
+        name: home
+        file: src/content/pages/home.json
+        fields:
+          # ---- Hero ----
+          - label: Hero
+            name: hero
+            widget: object
+            collapsed: true
+            hint: "The full-screen section at the top of the homepage."
+            fields:
+              - label: Eyebrow
+                name: eyebrow
+                widget: string
+                hint: "Small text above the headline. e.g. \"The Community Church · Honiton\""
+
+              - label: "Headline — before the accent word"
+                name: headingBefore
+                widget: string
+                hint: "The words before the clay-coloured accent word. e.g. \"Lives changed by\""
+
+              - label: "Headline — accent word"
+                name: accentWord
+                widget: string
+                hint: "The highlighted word in the headline (shown in clay/orange). e.g. \"Jesus\""
+
+              - label: "Headline — after the accent word"
+                name: headingAfter
+                widget: string
+                hint: "The words after the clay-coloured accent word. e.g. \"in East Devon.\""
+
+              - label: Subtitle
+                name: subtitle
+                widget: text
+                hint: "The sentence below the headline. Use {venue}, {area}, {time} to insert service facts automatically."
+
+              - label: "Primary button label"
+                name: primaryCtaLabel
+                widget: string
+                hint: "e.g. \"Plan your first visit\""
+
+              - label: "Secondary button label"
+                name: secondaryCtaLabel
+                widget: string
+                hint: "e.g. \"What happens on a Sunday\""
+
+          # ---- Welcome ----
+          - label: Welcome
+            name: welcome
+            widget: object
+            collapsed: true
+            hint: "The two-column welcome section with the photo."
+            fields:
+              - label: Eyebrow
+                name: eyebrow
+                widget: string
+                hint: "Small label above the section heading. e.g. \"Welcome\""
+
+              - label: Heading
+                name: heading
+                widget: string
+                hint: "The main heading of the Welcome section."
+
+              - label: "First paragraph"
+                name: body1
+                widget: text
+                hint: "The welcoming paragraph. Plain text — no HTML."
+
+              - label: "Second paragraph (family line)"
+                name: body2
+                widget: string
+                hint: "The family-of-churches line. Leave blank to use the value from Site Settings automatically."
+
+              - label: "Primary button label"
+                name: primaryCtaLabel
+                widget: string
+                hint: "e.g. \"I'm new here\""
+
+              - label: "Secondary button label"
+                name: secondaryCtaLabel
+                widget: string
+                hint: "e.g. \"Our vision & values\""
+
+              - label: "Badge number"
+                name: badgeNumber
+                widget: string
+                hint: "The large number on the badge over the photo. e.g. \"90\" (for 90 minutes)."
+
+              - label: "Badge caption"
+                name: badgeCaption
+                widget: text
+                hint: "The small caption below the badge number. e.g. \"music, teaching\\n& good coffee\""
+
+          # ---- Plan Your Sunday ----
+          - label: "Plan Your Sunday"
+            name: planSunday
+            widget: object
+            collapsed: true
+            hint: "The dark section with three cards — When, Where, What to expect."
+            fields:
+              - label: Eyebrow
+                name: eyebrow
+                widget: string
+                hint: "Small label above the section heading. e.g. \"Plan your Sunday\""
+
+              - label: Heading
+                name: heading
+                widget: string
+                hint: "The main heading of the Plan Your Sunday section."
+
+              - label: "Card 1 — Title"
+                name: card1Title
+                widget: string
+                hint: "Heading for the first card (clock icon). e.g. \"When\""
+
+              - label: "Card 1 — Body"
+                name: card1Body
+                widget: text
+                hint: "Body text for the When card. Use {day}, {time}, {arrive} for service facts. The service time will be shown in bold automatically."
+
+              - label: "Card 2 — Title"
+                name: card2Title
+                widget: string
+                hint: "Heading for the second card (pin icon). e.g. \"Where\""
+
+              - label: "Card 2 — Body"
+                name: card2Body
+                widget: text
+                hint: "Body text for the Where card. Use {venue}, {area} for service facts."
+
+              - label: "Card 3 — Title"
+                name: card3Title
+                widget: string
+                hint: "Heading for the third card (lines icon). e.g. \"What to expect\""
+
+              - label: "Card 3 — Body"
+                name: card3Body
+                widget: text
+                hint: "Body text for the What to Expect card. Plain text."
+
+          # ---- Sermons ----
+          - label: Sermons
+            name: sermons
+            widget: object
+            collapsed: true
+            hint: "The section with the SoundCloud sermon player."
+            fields:
+              - label: Eyebrow
+                name: eyebrow
+                widget: string
+                hint: "Small label above the section heading. e.g. \"Sermons\""
+
+              - label: Heading
+                name: heading
+                widget: string
+                hint: "The main heading of the Sermons section."
+
+              - label: Body
+                name: body
+                widget: text
+                hint: "One or two sentences introducing the sermon player."
+
+              - label: "Button label"
+                name: ctaLabel
+                widget: string
+                hint: "e.g. \"Browse all sermons\""
+
+          # ---- Find Your Place ----
+          - label: "Find Your Place"
+            name: findYourPlace
+            widget: object
+            collapsed: true
+            hint: "The teal section with four image tiles."
+            fields:
+              - label: Eyebrow
+                name: eyebrow
+                widget: string
+                hint: "Small label above the section heading. e.g. \"Find your place\""
+
+              - label: Heading
+                name: heading
+                widget: string
+                hint: "The main heading of the Find Your Place section."
+
+              - label: "Tile 1 — Title"
+                name: tile1Title
+                widget: string
+                hint: "Title on the Sundays tile. e.g. \"Sundays\""
+
+              - label: "Tile 1 — Blurb"
+                name: tile1Blurb
+                widget: string
+                hint: "Short caption on the Sundays tile. e.g. \"What a morning looks like →\""
+
+              - label: "Tile 2 — Title"
+                name: tile2Title
+                widget: string
+                hint: "Title on the Children & Youth tile."
+
+              - label: "Tile 2 — Blurb"
+                name: tile2Blurb
+                widget: string
+                hint: "Short caption on the Children & Youth tile."
+
+              - label: "Tile 3 — Title"
+                name: tile3Title
+                widget: string
+                hint: "Title on the Foodbank tile."
+
+              - label: "Tile 3 — Blurb"
+                name: tile3Blurb
+                widget: string
+                hint: "Short caption on the Foodbank tile."
+
+              - label: "Tile 4 — Title"
+                name: tile4Title
+                widget: string
+                hint: "Title on the Satellites tile."
+
+              - label: "Tile 4 — Blurb"
+                name: tile4Blurb
+                widget: string
+                hint: "Short caption on the Satellites tile."
+
+          # ---- Give / CTA band ----
+          - label: Give
+            name: give
+            widget: object
+            collapsed: true
+            hint: "The clay-coloured giving band at the bottom of the page."
+            fields:
+              - label: Heading
+                name: heading
+                widget: string
+                hint: "The large heading on the clay-coloured Give band."
+
+              - label: Body
+                name: body
+                widget: text
+                hint: "One or two sentences below the Give heading."
+
+              - label: "Button label"
+                name: ctaLabel
+                widget: string
+                hint: "e.g. \"Give to the church\""

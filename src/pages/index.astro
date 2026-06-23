@@ -1,23 +1,16 @@
 ---
 import { Image } from 'astro:assets';
-import { getCollection } from 'astro:content';
+import { getCollection, getEntry } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Button from '../components/Button.astro';
 import { site, link } from '../data/site';
+import { interpolate } from '../utils/interpolate';
 import heroImg from '../assets/img/honiton-worship.jpg';
 import welcomeImg from '../assets/img/church-life.jpg';
-import teachingImg from '../assets/img/community-people.jpg';
-import sundayImg from '../assets/img/christmas.jpg';
-import youthImg from '../assets/img/youth-event.jpg';
-import satellitesImg from '../assets/img/youth-trip.jpg';
-
-const mapsUrl = `https://www.google.com/maps/search/${encodeURIComponent(site.mapQuery)}`;
 
 // ---------------------------------------------------------------------------
 // Next event: the earliest upcoming one-off event from the Content Collection.
 // Falls back gracefully to null if no dated events exist (block is hidden).
-// We keep the Play On poster image hardcoded here for the demo — a Phase 1/2
-// task would wire a per-event image field and resolve it dynamically.
 // ---------------------------------------------------------------------------
 const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
 const allEvents = await getCollection('events');
@@ -27,11 +20,126 @@ const nextEvent = allEvents
   .sort((a, b) => (a.date ?? '').localeCompare(b.date ?? ''))[0] ?? null;
 
 // ---------------------------------------------------------------------------
-// Site settings: read the CMS-editable theme token for the hero accent word.
-// Falls back to "Jesus" if settings are missing so the page never breaks.
+// Global settings: service facts used for token interpolation throughout the
+// page.  Falls back to site.ts values so a missing settings file never breaks
+// the build.
 // ---------------------------------------------------------------------------
-const settingsEntries = await getCollection('site-settings');
-const heroAccentText = settingsEntries[0]?.data?.heroAccentText ?? 'Jesus';
+const settingsEntry = await getEntry('site-settings', 'settings');
+const s = settingsEntry?.data;
+
+// Service-fact token map — used by interpolate() for every token template.
+const tokens = {
+  venue    : s?.serviceVenue   ?? site.service.venue,
+  area     : s?.serviceArea    ?? site.service.area,
+  day      : s?.serviceDay     ?? site.service.day,
+  time     : s?.serviceTime    ?? site.service.time,
+  arrive   : s?.serviceArrive  ?? site.service.arrive,
+  duration : s?.serviceDuration ?? site.service.duration,
+};
+
+// Also keep the resolved mapsUrl from the token values.
+const mapsUrl = `https://www.google.com/maps/search/${encodeURIComponent(
+  `${tokens.venue} ${tokens.area} EX14`
+)}`;
+
+// ---------------------------------------------------------------------------
+// Homepage content: read from the pages/home entry (nested by section).
+// Every field falls back to the original hardcoded copy so a blank CMS field
+// never breaks the design or the build.
+// The t() helper: returns the CMS value if non-blank, otherwise the fallback.
+// ---------------------------------------------------------------------------
+const homeEntry = await getEntry('pages', 'home');
+const h = homeEntry?.data;
+
+/** Return CMS value if present and non-empty; otherwise the fallback string. */
+const t = (val: string | undefined, fallback: string): string =>
+  val && val.trim() ? val : fallback;
+
+// Hero
+const heroEyebrow    = t(h?.hero?.eyebrow, 'The Community Church · Honiton');
+// Full headline: "Lives changed by <accent> in East Devon."
+// headingBefore / headingAfter let the admin edit the prose around the accent word.
+const heroHeadingBefore = t(h?.hero?.headingBefore, 'Lives changed by');
+const heroHeadingAfter  = t(h?.hero?.headingAfter,  'in East Devon.');
+// accentWord comes from the home entry first, then falls back to the global
+// heroAccentText from site-settings (preserving the old behaviour).
+const heroAccentWord = t(h?.hero?.accentWord, t(s?.heroAccentText, 'Jesus'));
+// heroSubtitle may contain {venue}/{area}/{time} tokens.
+const heroSubtitleRaw = t(
+  h?.hero?.subtitle,
+  'An ordinary community of people finding a bigger story. We meet at {venue}, {area}, every Sunday at {time} — and you\'re warmly invited.'
+);
+const heroSubtitle = interpolate(heroSubtitleRaw, tokens);
+const heroPrimaryCtaLabel   = t(h?.hero?.primaryCtaLabel,   'Plan your first visit');
+const heroSecondaryCtaLabel = t(h?.hero?.secondaryCtaLabel, 'What happens on a Sunday');
+
+// Welcome
+const welcomeEyebrow            = t(h?.welcome?.eyebrow,            'Welcome');
+const welcomeHeading            = t(h?.welcome?.heading,            'However you arrive, there\'s a place for you here.');
+const welcomeBody1              = t(h?.welcome?.body1,              'Whether you\'ve followed Jesus for decades, wandered away years ago, or you\'re simply curious — you\'ll find a warm welcome, honest conversation and zero pressure. Come exactly as you are.');
+// welcomeBody2 defaults to the global family-of-churches line.
+const welcomeBody2              = t(h?.welcome?.body2, s?.churchFamily ?? site.family);
+const welcomePrimaryCtaLabel    = t(h?.welcome?.primaryCtaLabel,    'I\'m new here');
+const welcomeSecondaryCtaLabel  = t(h?.welcome?.secondaryCtaLabel,  'Our vision & values');
+const welcomeBadgeNumber        = t(h?.welcome?.badgeNumber,        '90');
+const welcomeBadgeCaption       = t(h?.welcome?.badgeCaption,       'music, teaching\n& good coffee');
+
+// Plan Your Sunday — card bodies may contain tokens.
+// planCard1Body is split by the resolved {time} value so the time string can
+// be wrapped in a bold span without using set:html. This mirrors the pattern
+// the footer uses for its venue/time spans.
+const planEyebrow  = t(h?.planSunday?.eyebrow, 'Plan your Sunday');
+const planHeading  = t(h?.planSunday?.heading, 'Everything you need before you come.');
+const planCard1Title = t(h?.planSunday?.card1Title, 'When');
+const planCard1BodyRaw = interpolate(
+  t(h?.planSunday?.card1Body, '{day} at {time}. Doors and coffee from {arrive} — arrive early and say hello.'),
+  tokens
+);
+// Split the "When" card body at the resolved time value so the time can be
+// rendered in a bold span. If the time value does not appear in the body
+// (custom CMS copy that omits it), the whole string renders in plainCard1BodyFull.
+const planCard1TimeSplit = planCard1BodyRaw.indexOf(tokens.time);
+const planCard1BodyBefore = planCard1TimeSplit >= 0 ? planCard1BodyRaw.slice(0, planCard1TimeSplit) : planCard1BodyRaw;
+const planCard1BodyAfter  = planCard1TimeSplit >= 0 ? planCard1BodyRaw.slice(planCard1TimeSplit + tokens.time.length) : '';
+
+const planCard2Title = t(h?.planSunday?.card2Title, 'Where');
+const planCard2Body  = interpolate(
+  t(h?.planSunday?.card2Body, '{venue}, in the centre of {area}. Step-free access and parking nearby.'),
+  tokens
+);
+const planCard3Title = t(h?.planSunday?.card3Title, 'What to expect');
+const planCard3Body  = t(h?.planSunday?.card3Body,  'Around 90 minutes of live music, a down-to-earth talk, groups for kids and youth, and time over coffee afterwards.');
+
+// Sermons
+const sermonsEyebrow  = t(h?.sermons?.eyebrow,  'Sermons');
+const sermonsHeading  = t(h?.sermons?.heading,  'Catch up on a recent talk.');
+const sermonsBody     = t(h?.sermons?.body,     'Missed a Sunday, or want to go deeper during the week? Every talk is free to stream, whenever suits you.');
+const sermonsCtaLabel = t(h?.sermons?.ctaLabel, 'Browse all sermons');
+
+// Find Your Place tiles
+const findEyebrow   = t(h?.findYourPlace?.eyebrow,   'Find your place');
+const findHeading   = t(h?.findYourPlace?.heading,   'There\'s far more to us than Sunday.');
+const tile1Title    = t(h?.findYourPlace?.tile1Title, 'Sundays');
+const tile1Blurb    = t(h?.findYourPlace?.tile1Blurb, 'What a morning looks like →');
+const tile2Title    = t(h?.findYourPlace?.tile2Title, 'Children & Youth');
+const tile2Blurb    = t(h?.findYourPlace?.tile2Blurb, 'Space to grow and belong →');
+const tile3Title    = t(h?.findYourPlace?.tile3Title, 'Honiton Foodbank');
+const tile3Blurb    = t(h?.findYourPlace?.tile3Blurb, 'Practical love for our town →');
+const tile4Title    = t(h?.findYourPlace?.tile4Title, 'Satellites');
+const tile4Blurb    = t(h?.findYourPlace?.tile4Blurb, 'Our youth community →');
+
+// Give / CTA band
+const giveHeading  = t(h?.give?.heading,  'Partner with what God is doing in East Devon.');
+const giveBody     = t(h?.give?.body,     'Everything we do — Sundays, the foodbank, work with families and young people — is made possible by the generosity of ordinary people. Thank you.');
+const giveCtaLabel = t(h?.give?.ctaLabel, 'Give to the church');
+
+// External give URL comes from global settings.
+const giveUrl = s?.giveUrl ?? site.giveUrl;
+
+// Tile images (stay in code — not editable via CMS in Phase A).
+import sundayImg from '../assets/img/christmas.jpg';
+import youthImg from '../assets/img/youth-event.jpg';
+import satellitesImg from '../assets/img/youth-trip.jpg';
 ---
 <BaseLayout overHero={true}>
   <!-- ============ HERO ============ -->
@@ -42,17 +150,17 @@ const heroAccentText = settingsEntries[0]?.data?.heroAccentText ?? 'Jesus';
 
     <div class="mx-auto w-full max-w-8xl px-5 pb-24 pt-36 lg:px-8 lg:pb-32">
       <p class="reveal flex items-center gap-3 font-display text-xs font-semibold uppercase tracking-[0.22em] text-clay-400 sm:text-sm">
-        <span class="h-px w-8 bg-clay-400"></span> The Community Church · Honiton
+        <span class="h-px w-8 bg-clay-400"></span> {heroEyebrow}
       </p>
       <h1 class="reveal mt-6 max-w-4xl font-display text-hero font-black text-white">
-        Lives changed by <span class="text-clay-400">{heroAccentText}</span> in East Devon.
+        {heroHeadingBefore} <span class="text-clay-400">{heroAccentWord}</span> {heroHeadingAfter}
       </h1>
       <p class="reveal mt-7 max-w-xl text-lg leading-relaxed text-paper/85" style="--reveal-delay:120ms">
-        An ordinary community of people finding a bigger story. We meet at {site.service.venue}, {site.service.area}, every Sunday at {site.service.time} — and you're warmly invited.
+        {heroSubtitle}
       </p>
       <div class="reveal mt-9 flex flex-wrap items-center gap-3" style="--reveal-delay:240ms">
-        <Button href={link('/im-new')} variant="primary">Plan your first visit</Button>
-        <Button href={link('/sundays')} variant="outline">What happens on a Sunday</Button>
+        <Button href={link('/im-new')} variant="primary">{heroPrimaryCtaLabel}</Button>
+        <Button href={link('/sundays')} variant="outline">{heroSecondaryCtaLabel}</Button>
       </div>
     </div>
 
@@ -62,23 +170,23 @@ const heroAccentText = settingsEntries[0]?.data?.heroAccentText ?? 'Jesus';
   <section class="section-flow bg-paper py-20 lg:py-28">
     <div class="mx-auto grid max-w-8xl items-center gap-12 px-5 lg:grid-cols-2 lg:gap-16 lg:px-8">
       <div class="reveal">
-        <p class="font-display text-sm font-semibold uppercase tracking-[0.18em] text-clay">Welcome</p>
-        <h2 class="mt-4 font-display text-display font-black text-ink">However you arrive, there's a place for you here.</h2>
+        <p class="font-display text-sm font-semibold uppercase tracking-[0.18em] text-clay">{welcomeEyebrow}</p>
+        <h2 class="mt-4 font-display text-display font-black text-ink">{welcomeHeading}</h2>
         <p class="mt-6 text-lg leading-relaxed text-ink/70">
-          Whether you've followed Jesus for decades, wandered away years ago, or you're simply curious — you'll find a warm welcome, honest conversation and zero pressure. Come exactly as you are.
+          {welcomeBody1}
         </p>
-        <p class="mt-4 text-lg leading-relaxed text-ink/70">{site.family}</p>
+        <p class="mt-4 text-lg leading-relaxed text-ink/70">{welcomeBody2}</p>
         <div class="mt-8 flex flex-wrap gap-3">
-          <Button href={link('/im-new')} variant="ghost">I'm new here</Button>
-          <Button href={link('/about/vision-values')} variant="ghost">Our vision &amp; values</Button>
+          <Button href={link('/im-new')} variant="ghost">{welcomePrimaryCtaLabel}</Button>
+          <Button href={link('/about/vision-values')} variant="ghost">{welcomeSecondaryCtaLabel}</Button>
         </div>
       </div>
       <div class="reveal" style="--reveal-delay:120ms">
         <div class="relative">
           <Image src={welcomeImg} alt="Families and children worshipping together at The Beehive" class="aspect-[4/3] w-full rounded-[2rem] object-cover shadow-2xl" />
           <div class="absolute -bottom-6 -left-4 hidden rounded-3xl bg-clay px-7 py-6 text-white shadow-xl sm:block">
-            <p class="font-display text-4xl font-black leading-none">90<span class="align-top text-lg">min</span></p>
-            <p class="mt-1.5 text-sm leading-snug text-white/85">music, teaching<br />&amp; good coffee</p>
+            <p class="font-display text-4xl font-black leading-none">{welcomeBadgeNumber}<span class="align-top text-lg">min</span></p>
+            <p class="mt-1.5 text-sm leading-snug text-white/85" set:html={welcomeBadgeCaption.replace('\n', '<br />')} />
           </div>
         </div>
       </div>
@@ -89,31 +197,33 @@ const heroAccentText = settingsEntries[0]?.data?.heroAccentText ?? 'Jesus';
   <section class="section-flow grain bg-ink py-20 text-paper lg:py-28">
     <div class="mx-auto max-w-8xl px-5 lg:px-8">
       <div class="reveal max-w-2xl">
-        <p class="font-display text-sm font-semibold uppercase tracking-[0.18em] text-clay-400">Plan your Sunday</p>
-        <h2 class="mt-4 font-display text-display font-black">Everything you need before you come.</h2>
+        <p class="font-display text-sm font-semibold uppercase tracking-[0.18em] text-clay-400">{planEyebrow}</p>
+        <h2 class="mt-4 font-display text-display font-black">{planHeading}</h2>
       </div>
       <div class="mt-14 grid gap-5 md:grid-cols-3">
         <div class="reveal rounded-[1.75rem] bg-white/[0.04] p-8 ring-1 ring-white/10">
           <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-clay/15 text-clay-400">
             <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
           </div>
-          <h3 class="mt-6 font-display text-xl font-bold">When</h3>
-          <p class="mt-2 leading-relaxed text-paper/70">{site.service.day} at <span class="font-semibold text-paper">{site.service.time}</span>. Doors and coffee from {site.service.arrive} — arrive early and say hello.</p>
+          <h3 class="mt-6 font-display text-xl font-bold">{planCard1Title}</h3>
+          <p class="mt-2 leading-relaxed text-paper/70">
+            {planCard1BodyBefore}<span class="font-semibold text-paper">{planCard1TimeSplit >= 0 ? tokens.time : ''}</span>{planCard1BodyAfter}
+          </p>
         </div>
         <div class="reveal rounded-[1.75rem] bg-white/[0.04] p-8 ring-1 ring-white/10" style="--reveal-delay:120ms">
           <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-clay/15 text-clay-400">
             <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none"><path d="M12 21s7-6 7-11a7 7 0 1 0-14 0c0 5 7 11 7 11z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="10" r="2.4" stroke="currentColor" stroke-width="1.8"/></svg>
           </div>
-          <h3 class="mt-6 font-display text-xl font-bold">Where</h3>
-          <p class="mt-2 leading-relaxed text-paper/70">{site.service.venue}, in the centre of {site.service.area}. Step-free access and parking nearby.</p>
+          <h3 class="mt-6 font-display text-xl font-bold">{planCard2Title}</h3>
+          <p class="mt-2 leading-relaxed text-paper/70">{planCard2Body}</p>
           <a href={mapsUrl} target="_blank" rel="noopener noreferrer" class="mt-3 inline-flex items-center gap-1.5 font-semibold text-clay-400 hover:text-clay">Get directions →</a>
         </div>
         <div class="reveal rounded-[1.75rem] bg-white/[0.04] p-8 ring-1 ring-white/10" style="--reveal-delay:240ms">
           <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-clay/15 text-clay-400">
             <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
           </div>
-          <h3 class="mt-6 font-display text-xl font-bold">What to expect</h3>
-          <p class="mt-2 leading-relaxed text-paper/70">Around 90 minutes of live music, a down-to-earth talk, groups for kids and youth, and time over coffee afterwards.</p>
+          <h3 class="mt-6 font-display text-xl font-bold">{planCard3Title}</h3>
+          <p class="mt-2 leading-relaxed text-paper/70">{planCard3Body}</p>
         </div>
       </div>
     </div>
@@ -123,13 +233,13 @@ const heroAccentText = settingsEntries[0]?.data?.heroAccentText ?? 'Jesus';
   <section class="section-flow bg-paper py-20 lg:py-28">
     <div class="mx-auto grid max-w-8xl items-center gap-12 px-5 lg:grid-cols-2 lg:gap-16 lg:px-8">
       <div class="reveal">
-        <p class="font-display text-sm font-semibold uppercase tracking-[0.18em] text-clay">Sermons</p>
-        <h2 class="mt-4 font-display text-display font-black text-ink">Catch up on a recent talk.</h2>
+        <p class="font-display text-sm font-semibold uppercase tracking-[0.18em] text-clay">{sermonsEyebrow}</p>
+        <h2 class="mt-4 font-display text-display font-black text-ink">{sermonsHeading}</h2>
         <p class="mt-6 text-lg leading-relaxed text-ink/70">
-          Missed a Sunday, or want to go deeper during the week? Every talk is free to stream, whenever suits you.
+          {sermonsBody}
         </p>
         <div class="mt-8">
-          <Button href={link('/sermons')} variant="ghost">Browse all sermons</Button>
+          <Button href={link('/sermons')} variant="ghost">{sermonsCtaLabel}</Button>
         </div>
       </div>
       <div class="reveal overflow-hidden rounded-[2rem] shadow-xl ring-1 ring-ink/5" style="--reveal-delay:120ms">
@@ -151,8 +261,8 @@ const heroAccentText = settingsEntries[0]?.data?.heroAccentText ?? 'Jesus';
     <div class="mx-auto max-w-8xl px-5 lg:px-8">
       <div class="reveal flex flex-col justify-between gap-6 md:flex-row md:items-end">
         <div class="max-w-2xl">
-          <p class="font-display text-sm font-semibold uppercase tracking-[0.18em] text-sand">Find your place</p>
-          <h2 class="mt-4 font-display text-display font-black">There's far more to us than Sunday.</h2>
+          <p class="font-display text-sm font-semibold uppercase tracking-[0.18em] text-sand">{findEyebrow}</p>
+          <h2 class="mt-4 font-display text-display font-black">{findHeading}</h2>
         </div>
         <a href={link('/community')} class="inline-flex shrink-0 items-center gap-2 font-display font-semibold text-paper hover:text-sand">All ministries →</a>
       </div>
@@ -162,31 +272,31 @@ const heroAccentText = settingsEntries[0]?.data?.heroAccentText ?? 'Jesus';
           <Image src={sundayImg} alt="A Sunday gathering at The Beehive" class="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
           <div class="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/30 to-transparent"></div>
           <div class="relative p-6">
-            <h3 class="font-display text-2xl font-bold">Sundays</h3>
-            <p class="mt-1 text-paper/75">What a morning looks like →</p>
+            <h3 class="font-display text-2xl font-bold">{tile1Title}</h3>
+            <p class="mt-1 text-paper/75">{tile1Blurb}</p>
           </div>
         </a>
         <a href={link('/community/youth')} class="reveal group relative flex h-80 flex-col justify-end overflow-hidden rounded-[1.75rem]" style="--reveal-delay:100ms">
           <Image src={youthImg} alt="Young people at a summer youth event" class="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
           <div class="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/30 to-transparent"></div>
           <div class="relative p-6">
-            <h3 class="font-display text-2xl font-bold">Children &amp; Youth</h3>
-            <p class="mt-1 text-paper/75">Space to grow and belong →</p>
+            <h3 class="font-display text-2xl font-bold">{tile2Title}</h3>
+            <p class="mt-1 text-paper/75">{tile2Blurb}</p>
           </div>
         </a>
         <a href={link('/community/foodbank')} class="reveal grain group relative flex h-80 flex-col justify-between overflow-hidden rounded-[1.75rem] bg-clay p-6 text-white" style="--reveal-delay:200ms">
           <svg class="h-10 w-10 text-white/90" viewBox="0 0 24 24" fill="none"><path d="M5 9h14l-1 11H6L5 9z" stroke="currentColor" stroke-width="1.6"/><path d="M9 9V6a3 3 0 0 1 6 0v3" stroke="currentColor" stroke-width="1.6"/></svg>
           <div>
-            <h3 class="font-display text-2xl font-bold">Honiton Foodbank</h3>
-            <p class="mt-1 text-white/85">Practical love for our town →</p>
+            <h3 class="font-display text-2xl font-bold">{tile3Title}</h3>
+            <p class="mt-1 text-white/85">{tile3Blurb}</p>
           </div>
         </a>
         <a href={link('/community/satellites')} class="reveal group relative flex h-80 flex-col justify-end overflow-hidden rounded-[1.75rem]" style="--reveal-delay:300ms">
           <Image src={satellitesImg} alt="The youth team away at a festival" class="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
           <div class="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/30 to-transparent"></div>
           <div class="relative p-6">
-            <h3 class="font-display text-2xl font-bold">Satellites</h3>
-            <p class="mt-1 text-paper/75">Our youth community →</p>
+            <h3 class="font-display text-2xl font-bold">{tile4Title}</h3>
+            <p class="mt-1 text-paper/75">{tile4Blurb}</p>
           </div>
         </a>
       </div>
@@ -195,8 +305,6 @@ const heroAccentText = settingsEntries[0]?.data?.heroAccentText ?? 'Jesus';
 
   <!-- ============ NEXT EVENT ============ -->
   <!-- Block is only rendered when there is at least one upcoming dated event in the collection. -->
-  <!-- Image removed: the hardcoded Play On poster did not match the dynamically-selected
-       next event. A per-event image field is a later phase; until then this is text-only. -->
   {nextEvent && (
     <section class="section-flow bg-paper py-20 lg:py-28">
       <div class="mx-auto max-w-3xl px-5 lg:px-8">
@@ -221,12 +329,12 @@ const heroAccentText = settingsEntries[0]?.data?.heroAccentText ?? 'Jesus';
   <!-- ============ GIVE ============ -->
   <section class="section-flow grain relative isolate bg-clay py-20 text-white lg:py-24">
     <div class="mx-auto max-w-3xl px-5 text-center lg:px-8">
-      <h2 class="reveal font-display text-display font-black">Partner with what God is doing in East Devon.</h2>
+      <h2 class="reveal font-display text-display font-black">{giveHeading}</h2>
       <p class="reveal mx-auto mt-5 max-w-xl text-lg leading-relaxed text-white/85" style="--reveal-delay:120ms">
-        Everything we do — Sundays, the foodbank, work with families and young people — is made possible by the generosity of ordinary people. Thank you.
+        {giveBody}
       </p>
       <div class="reveal mt-9 flex justify-center" style="--reveal-delay:240ms">
-        <Button href={site.giveUrl} variant="ghost" external>Give to the church</Button>
+        <Button href={giveUrl} variant="ghost" external>{giveCtaLabel}</Button>
       </div>
     </div>
   </section>
